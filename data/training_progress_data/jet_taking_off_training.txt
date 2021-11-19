@@ -1,0 +1,24 @@
+
+
+--- Initial Predictions for jet_taking_off ---
+predicted classes: ['airplane', 'fire hydrant', 'person', 'person', 'person', 'person', 'person', 'person'] 
+predicted score: [0.99901474, 0.9744357, 0.33703724, 0.3183191, 0.3016943, 0.1248444, 0.05808732, 0.057860736]
+
+
+--- Generating adversarial patch for jet_taking_off ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1 losses --- 
+Current detection loss: 0.796812 
+Exponential rolling average detection loss: 0.007968 
+
+Current perceptibility loss: 0.000000 
+Exponential rolling average perceptibility loss: 0.000000 
+
+
+
+--- Final predictions for jet_taking_off with adversarial patch ---
+predicted classes: ['airplane', 'fire hydrant', 'person', 'person', 'person', 'person', 'person', 'person'] 
+predicted score: [0.99894863, 0.9744357, 0.33709997, 0.3183365, 0.30169347, 0.12485742, 0.057368685, 0.05289015]

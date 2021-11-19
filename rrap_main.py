@@ -40,12 +40,12 @@ def generate_rrap_for_image(image_name):
     image = Image_For_Patch(name = image_name, object_detector=FRCNN, file_type=file_type)
     training_data_path = (f"{TRAINING_DATA_DIRECTORY}training_data_for_{image_name}.txt")
 
-    attack = RobustDPatch(estimator=FRCNN, max_iter=1000, batch_size=1, verbose=False, rotation_weights=(1,0,0,0), 
+    attack = RobustDPatch(estimator=FRCNN, max_iter=1, batch_size=1, verbose=False, rotation_weights=(1,0,0,0), 
                         brightness_range= (1.0,1.0), decay_rate = 0.95, detection_momentum = 0.9, perceptibility_momentum = 0.9,
                         image_to_patch = image, training_data_path = training_data_path, perceptibility_learning_rate = 2.0, 
                         detection_learning_rate = 1.0, training_data = get_previous_training_data(training_data_path))
 
-    generate_adversarial_patch(attack, image, step_num = 100)
+    generate_adversarial_patch(attack, image, step_num = 1)
 
     adv_patch = attack.get_patch()
     save_image_from_np_array(adv_patch, path = f"{PATCHES_DIRECTORY}patch_for_{image_name}.{file_type}")

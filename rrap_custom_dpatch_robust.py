@@ -304,8 +304,7 @@ class RobustDPatch(EvasionAttack):
     
             #self._patch += current_patch_perceptibility_update
 
-            self._old_patch_perceptibility_update = (self.perceptibility_momentum * self._old_patch_perceptibility_update) + ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update)
-            self._patch += self._old_patch_perceptibility_update 
+            self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
 
             if self.estimator.clip_values is not None:
                 self._patch = np.clip(self._patch, a_min=self.estimator.clip_values[0], a_max=self.estimator.clip_values[1])
