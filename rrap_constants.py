@@ -3,7 +3,7 @@ import sys
 import torch
 
 from torchvision import transforms
-from rrap_custom_pytorch_faster_rcnn import PyTorchFasterRCNN
+from custom_pytorch_faster_rcnn import PyTorchFasterRCNN
 
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(ROOT_DIRECTORY)

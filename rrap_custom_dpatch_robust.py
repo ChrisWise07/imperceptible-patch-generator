@@ -260,51 +260,48 @@ class RobustDPatch(EvasionAttack):
         num_batches = math.ceil(x.shape[0] / self.batch_size)
     
         for i_step in trange(self.max_iter, desc="RobustDPatch iteration", disable=not self.verbose):
-            if (i_step % 4 == 0):
-                patch_gradients_old = np.zeros_like(self._patch)
+            #if (i_step % 1 == 0):
+            patch_gradients_old = np.zeros_like(self._patch)
 
-                for i_batch in range(num_batches):
-                    i_batch_start = i_batch * self.batch_size
-                    i_batch_end = min((i_batch + 1) * self.batch_size, x.shape[0])
+            for i_batch in range(num_batches):
+                i_batch_start = i_batch * self.batch_size
+                i_batch_end = min((i_batch + 1) * self.batch_size, x.shape[0])
 
-                    if y is None:
-                        y_batch = y
-                    else:
-                        y_batch = y[i_batch_start:i_batch_end]
+                if y is None:
+                    y_batch = y
+                else:
+                    y_batch = y[i_batch_start:i_batch_end]
 
-                    # Sample and apply the random transformations:
-                    patched_images, patch_target, transforms = self._augment_images_with_patch(
-                        x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
-                    )
+                # Sample and apply the random transformations:
+                patched_images, patch_target, transforms = self._augment_images_with_patch(
+                    x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
+                )
 
-                    gradients, loss = self.estimator.loss_gradient(
-                        x=patched_images,
-                        y=patch_target,
-                        standardise_output=True,
-                    )
+                gradients, loss = self.estimator.loss_gradient(
+                    x=patched_images,
+                    y=patch_target,
+                    standardise_output=True,
+                )
 
-                    self.loss_tracker.update_detection_loss(loss)
+                self.loss_tracker.update_detection_loss(loss)
 
-                    gradients = self._untransform_gradients(
-                        gradients, transforms, channels_first=self.estimator.channels_first
-                    )
+                gradients = self._untransform_gradients(
+                    gradients, transforms, channels_first=self.estimator.channels_first
+                )
 
-                    patch_gradients_old += np.sum(gradients, axis=0)
+                patch_gradients_old += np.sum(gradients, axis=0)
 
-                #update patch based on detection
-                current_patch_detection_update = np.sign(patch_gradients_old) * (1 - 2 * int(self.targeted)) * self.detection_learning_rate
-
-                #self._patch += current_patch_detection_update 
-
-                self._old_patch_detection_update = (self.detection_momentum * self._old_patch_detection_update) + ((1 - self.detection_momentum) * current_patch_detection_update)
-                self._patch += self._old_patch_detection_update
+            #update patch based on detection
+            current_patch_detection_update = np.sign(patch_gradients_old) * (1 - 2 * int(self.targeted)) * self.detection_learning_rate
+            #self._patch += current_patch_detection_update 
+            self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
+            self._patch += self._old_patch_detection_update
             
             #update based on perceptibility
             current_patch_perceptibility_update = calculate_perceptibility_gradients_of_patch(self.image_to_patch.patch_section_rgb_diff, self._patch, self.loss_tracker) * -(self.perceptibility_learning_rate)
-    
             #self._patch += current_patch_perceptibility_update
-
             self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
+            self._patch += self._old_patch_perceptibility_update
 
             if self.estimator.clip_values is not None:
                 self._patch = np.clip(self._patch, a_min=self.estimator.clip_values[0], a_max=self.estimator.clip_values[1])
