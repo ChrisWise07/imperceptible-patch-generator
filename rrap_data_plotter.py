@@ -1,10 +1,5 @@
-import sys
-import os 
-
 from dataclasses import dataclass, field
 from typing import List
-
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from rrap_utils import plot_data
 
 @dataclass(frozen = True, repr=False, eq=False)

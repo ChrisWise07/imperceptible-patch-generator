@@ -21,8 +21,7 @@ This module implements the task specific estimator for Faster R-CNN v3 in PyTorc
 import logging
 from typing import List, Optional, Tuple, Union, TYPE_CHECKING
 
-
-from rrap_generator.custom_python_object_detector import CustomPyTorchObjectDetector
+from custom_python_object_detector import CustomPyTorchObjectDetector
 
 if TYPE_CHECKING:
     # pylint: disable=C0412

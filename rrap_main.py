@@ -1,9 +1,6 @@
 import numpy as np
-import os
-import sys
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from rrap_custom_dpatch_robust import RobustDPatch
+from custom_dpatch_robust import RobustDPatch
 from rrap_utils import *
 from rrap_image_for_patch import Image_For_Patch
 from rrap_constants import *

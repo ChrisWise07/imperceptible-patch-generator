@@ -1,12 +1,8 @@
 import os
-import sys
 import torch
 
 from torchvision import transforms
 from custom_pytorch_faster_rcnn import PyTorchFasterRCNN
-
-ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(ROOT_DIRECTORY)
 
 COCO_INSTANCE_CATEGORY_NAMES = [
     "__background__",
@@ -113,6 +109,8 @@ if not torch.cuda.is_available():
 else:
         cuda_idx = torch.cuda.current_device()
         DEVICE = torch.device(f"cuda:{cuda_idx}")
+
+ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 DATA_DIRECTORY = ROOT_DIRECTORY + "/data/"
 

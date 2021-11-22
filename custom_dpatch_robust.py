@@ -37,10 +37,6 @@ from art.attacks.attack import EvasionAttack
 from art.estimators.estimator import BaseEstimator, LossGradientsMixin
 from art.estimators.object_detection.object_detector import ObjectDetectorMixin
 from art import config
-
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from rrap_utils import calculate_perceptibility_gradients_of_patch
 from rrap_image_for_patch import Image_For_Patch
 from rrap_loss_tracker import Loss_Tracker

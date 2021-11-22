@@ -1,14 +1,10 @@
 import numpy as np
 import cv2
-import sys
-import os
 
 from dataclasses import InitVar, dataclass, field
 from torch.functional import Tensor
 from typing import Tuple
 from PIL import Image
-
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from rrap_utils import get_rgb_diff, file_handler, save_image_from_np_array
 from rrap_constants import INITIAL_PREDICTIONS_DIRECTORY, IMAGES_DIRECTORY, TRAINING_PROGRESS_DIRECTORY, COCO_INSTANCE_CATEGORY_NAMES, TRANSFORM
 
@@ -18,10 +14,10 @@ class Image_For_Patch:
     file_type: InitVar[str] 
     object_detector: InitVar[None]
     image_as_np_array: np.ndarray = field(init=False)
-    patch_section_rbg_diff: Tensor = field(init=False)
     patch_size: Tuple[int, int, int] = field(init=False)
     patch_location: Tuple[int, int] = field(init=False)
     patch_section_of_image: np.ndarray = field(init=False)
+    prediction_box_section_rgb_diff: Tensor = field(init=False)
 
     def __post_init__(self, file_type, object_detector):
         self.image_as_np_array = self._open_image_as_np_array(file_type)
@@ -33,10 +29,12 @@ class Image_For_Patch:
         self.patch_section_of_image = self.image_as_np_array[0][self.patch_location[0]:self.patch_location[0] + self.patch_shape[0], 
                                                            self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
                                                            :]
-        patch_section_tensor = TRANSFORM(self.patch_section_of_image).clamp(0,1)
-        self.patch_section_rgb_diff = get_rgb_diff(patch_section_tensor)
-  
-        
+
+        #Calculate RGB perceptability of section of image covered by prediction box
+        top_left_x, top_left_y, top_right_x, top_right_y = prediction_box[0][0], prediction_box[0][1], prediction_box[1][0], prediction_box[1][1] 
+        prediction_box_section_of_image = self.image_as_np_array[0][int(top_left_x):int(top_right_x), int(top_left_y):int(top_right_y), :]
+        prediction_box_section_tensor = TRANSFORM(prediction_box_section_of_image).clamp(0,1)
+        self.prediction_box_section_rgb_diff = get_rgb_diff(prediction_box_section_tensor)
     
     def _open_image_as_np_array(self, file_type, crop_box = None):
         image = np.asarray(Image.open(f"{IMAGES_DIRECTORY}{self.name}.{file_type}").crop(crop_box))

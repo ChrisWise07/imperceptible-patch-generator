@@ -1,16 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import sys
 import json
-import os
 
 from json import JSONEncoder
 from torch import Tensor
 from PIL import Image
 from matplotlib.ticker import (MultipleLocator, AutoLocator, AutoMinorLocator)
-
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from differential_color_functions import rgb2lab_diff, ciede2000_diff
 from rrap_constants import *
 
