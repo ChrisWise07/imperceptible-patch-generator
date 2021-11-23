@@ -294,7 +294,7 @@ class RobustDPatch(EvasionAttack):
             self._patch += self._old_patch_detection_update
             
             #update based on perceptibility
-            current_patch_perceptibility_update = calculate_perceptibility_gradients_of_patch(self.image_to_patch.patch_section_rgb_diff, self._patch, self.loss_tracker) * -(self.perceptibility_learning_rate)
+            current_patch_perceptibility_update = calculate_perceptibility_gradients_of_patch(self.image_to_patch.prediction_box_section_rgb_diff, self._patch, self.loss_tracker) * -(self.perceptibility_learning_rate)
             #self._patch += current_patch_perceptibility_update
             self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
             self._patch += self._old_patch_perceptibility_update

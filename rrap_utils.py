@@ -5,7 +5,6 @@ import json
 
 from json import JSONEncoder
 from torch import Tensor
-from PIL import Image
 from matplotlib.ticker import (MultipleLocator, AutoLocator, AutoMinorLocator)
 from differential_color_functions import rgb2lab_diff, ciede2000_diff
 from rrap_constants import *
@@ -19,7 +18,7 @@ class NumpyArrayEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 def save_image_from_np_array(np_array, path):
-        Image.fromarray(np.uint8(np_array)).save(path)
+        plt.imsave(path, np.uint8(np_array))
 
 def get_rgb_diff(image_tensor):
         return rgb2lab_diff(torch.stack([image_tensor], dim=0), DEVICE) 

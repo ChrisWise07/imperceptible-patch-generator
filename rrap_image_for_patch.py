@@ -1,12 +1,12 @@
 import numpy as np
 import cv2
 
+from matplotlib import pyplot
 from dataclasses import InitVar, dataclass, field
 from torch.functional import Tensor
 from typing import Tuple
-from PIL import Image
 from rrap_utils import get_rgb_diff, file_handler, save_image_from_np_array
-from rrap_constants import INITIAL_PREDICTIONS_DIRECTORY, IMAGES_DIRECTORY, TRAINING_PROGRESS_DIRECTORY, COCO_INSTANCE_CATEGORY_NAMES, TRANSFORM
+from rrap_constants import *
 
 @dataclass(repr=False, eq=False)
 class Image_For_Patch:
@@ -27,20 +27,19 @@ class Image_For_Patch:
         self.patch_shape, self.patch_location = self.cal_custom_patch_shape_and_location(prediction_box)
 
         self.patch_section_of_image = self.image_as_np_array[0][self.patch_location[0]:self.patch_location[0] + self.patch_shape[0], 
-                                                           self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
-                                                           :]
+                                                                self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
+                                                                :]
 
         #Calculate RGB perceptability of section of image covered by prediction box
         top_left_x, top_left_y, top_right_x, top_right_y = prediction_box[0][0], prediction_box[0][1], prediction_box[1][0], prediction_box[1][1] 
-        prediction_box_section_of_image = self.image_as_np_array[0][int(top_left_x):int(top_right_x), int(top_left_y):int(top_right_y), :]
+        prediction_box_section_of_image = self.image_as_np_array[0][int(top_left_y):int(top_right_y), int(top_left_x):int(top_right_x), :]
+        #save_image_from_np_array(prediction_box_section_of_image, f"{DATA_DIRECTORY}{self.name}.{file_type}")
         prediction_box_section_tensor = TRANSFORM(prediction_box_section_of_image).clamp(0,1)
         self.prediction_box_section_rgb_diff = get_rgb_diff(prediction_box_section_tensor)
     
-    def _open_image_as_np_array(self, file_type, crop_box = None):
-        image = np.asarray(Image.open(f"{IMAGES_DIRECTORY}{self.name}.{file_type}").crop(crop_box))
-        image = np.stack([image], axis=0).astype(np.float32)
-        return image
-    
+    def _open_image_as_np_array(self, file_type):
+        return np.stack([pyplot.imread(f"{IMAGES_DIRECTORY}{self.name}.{file_type}")], axis=0).astype(np.float32)
+
     def generate_predictions_for_image(self, object_detector, image, path):
         self.append_to_training_progress_file(f"\n--- Initial Predictions for {self.name} ---")
         predictions_boxes = self.plot_predictions(object_detector, image, path) 
