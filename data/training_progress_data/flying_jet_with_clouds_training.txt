@@ -1,8 +1,8 @@
 
 
 --- Initial Predictions for flying_jet_with_clouds ---
-predicted classes: ['airplane', 'person', 'airplane', 'person', 'airplane', 'person', 'person', 'person', 'person', 'person', 'person', 'person'] 
-predicted score: [0.99909914, 0.93853146, 0.90441555, 0.7249806, 0.7234682, 0.27309382, 0.24452251, 0.11755263, 0.08415936, 0.08184515, 0.07422817, 0.052435867]
+predicted classes: ['airplane', 'person', 'airplane', 'airplane', 'person', 'person', 'person', 'person', 'person', 'person', 'person'] 
+predicted score: [0.9991026, 0.9275518, 0.9052526, 0.6929162, 0.667375, 0.25615117, 0.2028042, 0.10502369, 0.07996848, 0.06887038, 0.06472788]
 
 
 --- Generating adversarial patch for flying_jet_with_clouds ---

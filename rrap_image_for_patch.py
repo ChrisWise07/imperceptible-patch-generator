@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-from matplotlib import pyplot
 from dataclasses import InitVar, dataclass, field
 from torch.functional import Tensor
 from typing import Tuple
@@ -17,10 +16,10 @@ class Image_For_Patch:
     patch_size: Tuple[int, int, int] = field(init=False)
     patch_location: Tuple[int, int] = field(init=False)
     patch_section_of_image: np.ndarray = field(init=False)
-    prediction_box_section_rgb_diff: Tensor = field(init=False)
+    image_rgb_diff: Tensor = field(init=False)
 
     def __post_init__(self, file_type, object_detector):
-        self.image_as_np_array = self._open_image_as_np_array(file_type)
+        self.image_as_np_array = self.open_image_as_rgb_np_array(file_type)
         prediction_box = self.generate_predictions_for_image(object_detector, self.image_as_np_array, path = f"{INITIAL_PREDICTIONS_DIRECTORY}{self.name}.{file_type}")
 
         #Customise patch location to centre of prediction box and patch to ratio of prediction box
@@ -30,15 +29,15 @@ class Image_For_Patch:
                                                                 self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
                                                                 :]
 
-        #Calculate RGB perceptability of section of image covered by prediction box
-        top_left_x, top_left_y, top_right_x, top_right_y = prediction_box[0][0], prediction_box[0][1], prediction_box[1][0], prediction_box[1][1] 
-        prediction_box_section_of_image = self.image_as_np_array[0][int(top_left_y):int(top_right_y), int(top_left_x):int(top_right_x), :]
+        #Calculate RGB perceptability of image
+        #top_left_x, top_left_y, top_right_x, top_right_y = prediction_box[0][0], prediction_box[0][1], prediction_box[1][0], prediction_box[1][1] 
+        #prediction_box_section_of_image = self.image_as_np_array[0][int(top_left_y):int(top_right_y), int(top_left_x):int(top_right_x), :]
         #save_image_from_np_array(prediction_box_section_of_image, f"{DATA_DIRECTORY}{self.name}.{file_type}")
-        prediction_box_section_tensor = TRANSFORM(prediction_box_section_of_image).clamp(0,1)
-        self.prediction_box_section_rgb_diff = get_rgb_diff(prediction_box_section_tensor)
+        self.image_rgb_diff = get_rgb_diff(TRANSFORM(self.image_as_np_array[0]).clamp(0,1))
     
-    def _open_image_as_np_array(self, file_type):
-        return np.stack([pyplot.imread(f"{IMAGES_DIRECTORY}{self.name}.{file_type}")], axis=0).astype(np.float32)
+    def open_image_as_rgb_np_array(self, file_type) -> np.ndarray:
+        img = cv2.cvtColor(cv2.imread(f"{IMAGES_DIRECTORY}{self.name}.{file_type}"), cv2.COLOR_BGR2RGB)
+        return np.stack([img], axis=0).astype(np.float32)
 
     def generate_predictions_for_image(self, object_detector, image, path):
         self.append_to_training_progress_file(f"\n--- Initial Predictions for {self.name} ---")
@@ -99,7 +98,7 @@ class Image_For_Patch:
                 cv2.putText(img, pred_cls[i], (int(boxes[i][0][0]), int(boxes[i][0][1])), 
                         cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
 
-        save_image_from_np_array(img, path)
+        save_image_from_np_array(path, img)
 
     def cal_custom_patch_shape_and_location(self, prediction_box):
         prediction_box_width_height = (prediction_box[1][0] - prediction_box[0][0], prediction_box[1][1] - prediction_box[0][1])

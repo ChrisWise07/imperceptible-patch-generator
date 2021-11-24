@@ -17,23 +17,26 @@ class NumpyArrayEncoder(JSONEncoder):
                 return obj.detach().numpy().tolist()
         return JSONEncoder.default(self, obj)
 
-def save_image_from_np_array(np_array, path):
+def save_image_from_np_array(path, np_array):
         plt.imsave(path, np.uint8(np_array))
+        plt.close
 
 def get_rgb_diff(image_tensor):
         return rgb2lab_diff(torch.stack([image_tensor], dim=0), DEVICE) 
 
-def calculate_perceptibility_gradients_of_patch(og_image_patch_section_rgb_diff, patch, loss_tracker):
-        patch_tensor = TRANSFORM(patch).clamp(0,1).requires_grad_(True)
-        patch_rgb_diff = get_rgb_diff(patch_tensor)
-        d_map=ciede2000_diff(og_image_patch_section_rgb_diff, patch_rgb_diff, DEVICE).unsqueeze(1)
+def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patched_image, loss_tracker):
+        patch_image_tensor = TRANSFORM(patched_image).clamp(0,1).requires_grad_(True)
+        patch_image_rgb_diff = get_rgb_diff(patch_image_tensor)
+        d_map=ciede2000_diff(og_image_rgb_diff, patch_image_rgb_diff, DEVICE).unsqueeze(1)
         perceptibility_dis=torch.norm(d_map.view(1,-1),dim=1)
         perceptibility_loss = perceptibility_dis.sum()
         loss_tracker.update_perceptibility_loss(perceptibility_loss.item())
         perceptibility_loss.backward()
-        #return patch_tensor.grad.permute(1,2,0).numpy()
-        return (patch_tensor.grad/torch.norm(patch_tensor.grad.view(1,-1),dim=1)).permute(1,2,0)
-        
+        return (patch_image_tensor.grad/torch.norm(patch_image_tensor.grad.view(1,-1),dim=1)).permute(1,2,0).numpy()
+
+def get_perceptibility_gradients_of_patch(og_image_object, patched_image, loss_tracker):
+        calculate_perceptibility_gradients_of_patched_image(og_image_object.image_rgb_diff, patched_image, loss_tracker)
+
 def file_handler(path, mode, func):
         try:
                 with open(path, mode) as f:
