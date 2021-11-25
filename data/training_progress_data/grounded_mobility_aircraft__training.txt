@@ -1,0 +1,24 @@
+
+
+--- Initial Predictions for grounded_mobility_aircraft_ ---
+predicted classes: ['airplane', 'truck', 'person', 'airplane', 'car', 'person', 'person', 'truck'] 
+predicted score: [0.988858, 0.6542098, 0.55713266, 0.12347755, 0.08113861, 0.07049547, 0.060752228, 0.05632559]
+
+
+--- Generating adversarial patch for grounded_mobility_aircraft_ ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1 losses --- 
+Current detection loss: 0.897983 
+Exponential rolling average detection loss: 0.008980 
+
+Current perceptibility loss: 350.994385 
+Exponential rolling average perceptibility loss: 3.509944 
+
+
+
+--- Final predictions for grounded_mobility_aircraft_ with adversarial patch ---
+predicted classes: ['airplane', 'truck', 'person', 'airplane', 'airplane', 'car', 'person', 'person', 'truck'] 
+predicted score: [0.9969591, 0.6542098, 0.55713266, 0.31952575, 0.087074846, 0.08113861, 0.07049547, 0.060752228, 0.05632559]

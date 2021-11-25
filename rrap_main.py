@@ -45,10 +45,10 @@ def generate_rrap_for_image(image_name):
     generate_adversarial_patch(attack, image, step_num = 1)
 
     adv_patch = attack.get_patch()
-    save_image_from_np_array(adv_patch, path = f"{PATCHES_DIRECTORY}patch_for_{image_name}.{file_type}")
+    save_image_from_np_array(f"{PATCHES_DIRECTORY}patch_for_{image_name}.{file_type}", adv_patch)
 
     image_adv_as_np_array = attack.apply_patch(x=image.image_as_np_array)
-    save_image_from_np_array(image_adv_as_np_array[0], path = f"{ADVERSARIAL_IMAGES_DIRECTORY}adv_{image_name}.{file_type}")
+    save_image_from_np_array(f"{ADVERSARIAL_IMAGES_DIRECTORY}adv_{image_name}.{file_type}", image_adv_as_np_array[0])
 
     image.append_to_training_progress_file(f"\n\n--- Final predictions for {image_name} with adversarial patch ---")
     image.plot_predictions(object_detector = FRCNN, image = image_adv_as_np_array, path = f"{ADVERSARIAL_PREDICTIONS_DIRECTORY}adv_{image_name}.{file_type}")

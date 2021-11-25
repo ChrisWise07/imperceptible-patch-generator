@@ -35,7 +35,12 @@ def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patch
         return (patch_image_tensor.grad/torch.norm(patch_image_tensor.grad.view(1,-1),dim=1)).permute(1,2,0).numpy()
 
 def get_perceptibility_gradients_of_patch(og_image_object, patched_image, loss_tracker):
-        calculate_perceptibility_gradients_of_patched_image(og_image_object.image_rgb_diff, patched_image, loss_tracker)
+        perceptibility_gradients = calculate_perceptibility_gradients_of_patched_image(og_image_object.image_rgb_diff, patched_image, loss_tracker)
+        return perceptibility_gradients[
+                og_image_object.patch_location[0]:og_image_object.patch_location[0] + og_image_object.patch_shape[0], 
+                og_image_object.patch_location[1]:og_image_object.patch_location[1] + og_image_object.patch_shape[1], 
+                ...
+                ]
 
 def file_handler(path, mode, func):
         try:

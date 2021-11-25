@@ -1,0 +1,24 @@
+
+
+--- Initial Predictions for flying_plane_at_distance ---
+predicted classes: ['airplane'] 
+predicted score: [0.999041]
+
+
+--- Generating adversarial patch for flying_plane_at_distance ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1 losses --- 
+Current detection loss: 0.058200 
+Exponential rolling average detection loss: 0.000582 
+
+Current perceptibility loss: 441.515045 
+Exponential rolling average perceptibility loss: 4.415150 
+
+
+
+--- Final predictions for flying_plane_at_distance with adversarial patch ---
+predicted classes: ['airplane'] 
+predicted score: [0.99960953]
