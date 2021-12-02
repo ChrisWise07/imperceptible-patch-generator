@@ -1,10 +1,24 @@
 import numpy as np
+import argparse
 
 from custom_dpatch_robust import RobustDPatch
 from rrap_utils import *
 from rrap_image_for_patch import Image_For_Patch
 from rrap_constants import *
 from rrap_data_plotter import Data_Plotter
+
+parser = argparse.ArgumentParser(description='Process hyperparameters')
+
+parser.add_argument('--max_iter', type=int, default=1000, help='Number of iterations per steps (default = 1000)')
+parser.add_argument('--step_num', type=int, default=50, help='Number of steps to perform (default = 50)')
+parser.add_argument('--decep_lr', type=float, default=0.1, help='The deception learning rate (default = 0.1)')
+parser.add_argument('--percep_lr', type=float, default=0.5, help='The perception learning rate (default = 0.5)')
+parser.add_argument('--decay_rate', type=float, default=0.95, help='How much the deception is decayed (default = 0.95)')
+parser.add_argument('--decep_mom', type=float, default=0.9, help='The deception update momentum (default = 0.9)')
+parser.add_argument('--percep_mom', type=float, default=0.9, help='The perception update momentum (default = 0.9)')
+parser.add_argument('--data_folder_name', type=str, default=None, help='Name of folder which data sits inside (default = None)')
+
+args = parser.parse_args()
 
 def generate_adversarial_patch(attack, image, step_num):
     image_name = image.name
@@ -37,10 +51,11 @@ def generate_rrap_for_image(image_name):
     image = Image_For_Patch(name = image_name, object_detector=FRCNN, file_type=file_type)
     training_data_path = (f"{TRAINING_DATA_DIRECTORY}training_data_for_{image_name}.txt")
 
-    attack = RobustDPatch(estimator=FRCNN, max_iter=1, batch_size=1, verbose=False, rotation_weights=(1,0,0,0), 
-                        brightness_range= (1.0,1.0), decay_rate = 0.95, detection_momentum = 0.9, perceptibility_momentum = 0.9,
-                        image_to_patch = image, training_data_path = training_data_path, perceptibility_learning_rate = 2.0, 
-                        detection_learning_rate = 1.0, training_data = get_previous_training_data(training_data_path))
+    attack = RobustDPatch(estimator=FRCNN, max_iter=args.max_iter, batch_size=1, verbose=False, 
+                          rotation_weights=(1,0,0,0), brightness_range= (1.0,1.0), decay_rate = args.decay_rate, 
+                          detection_momentum = args.decep_mom, perceptibility_momentum = args.percep_mom, image_to_patch = image, 
+                          training_data_path = training_data_path, perceptibility_learning_rate = args.percep_lr, 
+                          detection_learning_rate = args.decep_lr, training_data = get_previous_training_data(training_data_path))
 
     generate_adversarial_patch(attack, image, step_num = 1)
 

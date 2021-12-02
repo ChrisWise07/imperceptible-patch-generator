@@ -27,7 +27,7 @@ class Image_For_Patch:
 
         self.patch_section_of_image = self.image_as_np_array[0][self.patch_location[0]:self.patch_location[0] + self.patch_shape[0], 
                                                                 self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
-                                                                :]
+                                                                ...]
 
         #Calculate RGB perceptability of image
         #top_left_x, top_left_y, top_right_x, top_right_y = prediction_box[0][0], prediction_box[0][1], prediction_box[1][0], prediction_box[1][1] 

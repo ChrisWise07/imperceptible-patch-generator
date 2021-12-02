@@ -11,14 +11,24 @@ predicted score: [0.9991026, 0.9275518, 0.9052526, 0.6929162, 0.667375, 0.256151
 --- Step Number: 0 ---
 
 --- Iteration Number 1 losses --- 
-Current detection loss: 1.100724 
-Exponential rolling average detection loss: 0.011007 
+Current detection loss: 1.122398 
+Exponential rolling average detection loss: 0.011224 
 
-Current perceptibility loss: 420.555511 
-Exponential rolling average perceptibility loss: 4.205555 
+Current perceptibility loss: 410.079376 
+Exponential rolling average perceptibility loss: 4.100794 
 
 
+--- Iteration Number 2 losses --- 
+Current detection loss: 1.123631 
+Exponential rolling average detection loss: 0.022348 
 
---- Final predictions for flying_jet_with_clouds with adversarial patch ---
-predicted classes: ['airplane', 'airplane', 'airplane', 'person', 'person', 'person', 'book', 'person', 'airplane', 'person', 'person', 'person', 'person'] 
-predicted score: [0.993208, 0.9905894, 0.97781724, 0.93206716, 0.66753244, 0.2558755, 0.2443417, 0.2113583, 0.14033613, 0.116093256, 0.08000053, 0.06993134, 0.06685204]
+Current perceptibility loss: 411.230591 
+Exponential rolling average perceptibility loss: 8.172092 
+
+
+--- Iteration Number 3 losses --- 
+Current detection loss: 1.112154 
+Exponential rolling average detection loss: 0.033246 
+
+Current perceptibility loss: 414.004242 
+Exponential rolling average perceptibility loss: 12.230413 
