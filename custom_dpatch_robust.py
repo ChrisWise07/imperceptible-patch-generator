@@ -40,7 +40,6 @@ from art import config
 from rrap_utils import get_perceptibility_gradients_of_patch
 from rrap_image_for_patch import Image_For_Patch
 from rrap_loss_tracker import Loss_Tracker
-from rrap_constants import * #delete
 
 if TYPE_CHECKING:
     from art.utils import OBJECT_DETECTOR_TYPE

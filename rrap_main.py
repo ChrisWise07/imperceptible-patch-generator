@@ -20,6 +20,30 @@ parser.add_argument('--data_folder_name', type=str, default=None, help='Name of 
 
 args = parser.parse_args()
 
+current_experiment_data_directory = f"{ROOT_EXPERIMENT_DATA_DIRECTORY}/{args.data_folder_name}"
+os.mkdir(current_experiment_data_directory)
+
+initial_predictions_images_directory = f"{current_experiment_data_directory}/initial_predictions"
+os.mkdir(initial_predictions_images_directory)
+
+final_patches_directory = f"{current_experiment_data_directory}/patches_adv"
+os.mkdir(final_patches_directory)
+
+final_predictions_images_directory = f"{current_experiment_data_directory}/final_predictions"
+os.mkdir(final_predictions_images_directory)
+
+final_patched_images_directory = f"{current_experiment_data_directory}/final_patched_images"
+os.mkdir(final_patched_images_directory)
+
+previous_training_data_directory = f"{current_experiment_data_directory}/previous_training_data"
+os.mkdir(previous_training_data_directory)
+
+current_training_data_directory = f"{current_experiment_data_directory}/current_training_data"
+os.mkdir(current_training_data_directory)
+
+loss_plots_directory = f"{current_experiment_data_directory}/loss_plots_directory"
+os.mkdir(loss_plots_directory)
+
 def generate_adversarial_patch(attack, image, step_num):
     image_name = image.name
     data_plotter = Data_Plotter()
