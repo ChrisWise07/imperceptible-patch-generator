@@ -93,7 +93,7 @@ class RobustDPatch(EvasionAttack):
         detection_learning_rate: float = 0.01,
         image_to_patch: Image_For_Patch = None,
         training_data_path: str = None,
-        training_data: dict = None
+        previous_training_data: dict = None
         
 
     ):
@@ -132,14 +132,14 @@ class RobustDPatch(EvasionAttack):
         self.perceptibility_momentum = perceptibility_momentum
         self.training_data_path = training_data_path
 
-        if training_data:
-            self.detection_learning_rate = training_data["detection_learning_rate"]
-            self.perceptibility_learning_rate = training_data["perceptibility_learning_rate"]
-            self.loss_tracker = Loss_Tracker(rolling_perceptibility_loss = training_data["loss_data"]["perceptibility_loss"], 
-                                             rolling_detection_loss = training_data["loss_data"]["detection_loss"])
-            self._patch = np.array(training_data["patch_np_array"]).astype(config.ART_NUMPY_DTYPE)
-            self._old_patch_detection_update = np.array(training_data["old_patch_detection_update"])
-            self._old_patch_perceptibility_update = np.array(training_data["old_patch_perceptibility_update"])
+        if previous_training_data:
+            self.detection_learning_rate = previous_training_data["detection_learning_rate"]
+            self.perceptibility_learning_rate = previous_training_data["perceptibility_learning_rate"]
+            self.loss_tracker = Loss_Tracker(rolling_perceptibility_loss = previous_training_data["loss_data"]["perceptibility_loss"], 
+                                             rolling_detection_loss = previous_training_data["loss_data"]["detection_loss"])
+            self._patch = np.array(previous_training_data["patch_np_array"]).astype(config.ART_NUMPY_DTYPE)
+            self._old_patch_detection_update = np.array(previous_training_data["old_patch_detection_update"])
+            self._old_patch_perceptibility_update = np.array(previous_training_data["old_patch_perceptibility_update"])
         else:
             self.detection_learning_rate = detection_learning_rate
             self.perceptibility_learning_rate = perceptibility_learning_rate
@@ -575,5 +575,5 @@ class RobustDPatch(EvasionAttack):
     def get_image_to_patch(self):
         return self.image_to_patch 
     
-    def get_training_data_path(self):
+    def get_training_data_path(self) -> str:
         return self.training_data_path

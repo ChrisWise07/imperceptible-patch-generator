@@ -50,10 +50,12 @@ def file_handler(path, mode, func):
         except FileNotFoundError:
                 return 0
 
-def get_previous_training_data(training_data_path):
+def get_previous_training_data(previous_experiment_directory: str, image_name: str):
+        training_data_path = f"{ROOT_EXPERIMENT_DATA_DIRECTORY}/{previous_experiment_directory}/training_data/training_data_for_{image_name}.txt"
         return file_handler(path = training_data_path, mode = "r", func = lambda f: json.load(f))
 
-def get_previous_steps(training_data_path):
+def get_previous_steps(previous_experiment_directory: str, image_name: str):
+        training_data_path = f"{ROOT_EXPERIMENT_DATA_DIRECTORY}/{previous_experiment_directory}/training_data/training_data_for_{image_name}.txt"
         return file_handler(path = training_data_path, mode = "r", func = lambda f: int(json.load(f)["step_number"]))
 
 def record_attack_training_data(attack, step_number):
@@ -71,6 +73,7 @@ def record_attack_training_data(attack, step_number):
 
 
 def plot_data(rolling_loss_history, current_loss_history, lr_history, image_name, loss_type):
+        from rrap_main import loss_plots_directory
         # create figure and axis objects with subplots()
         fig,ax = plt.subplots()
 
@@ -103,5 +106,5 @@ def plot_data(rolling_loss_history, current_loss_history, lr_history, image_name
 
         # save the plot as a file
         plt.title(f"{loss_type} Data Over Step Numbers", fontsize=12)
-        plt.savefig(f"{PLOTS_DIRECTORY}{loss_type}_loss_data_{image_name}", bbox_inches='tight')
+        plt.savefig(f"{loss_plots_directory}/{loss_type}_loss_data_{image_name}", bbox_inches='tight')
         plt.close()

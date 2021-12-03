@@ -6,7 +6,7 @@ from torch.functional import Tensor
 from typing import Tuple
 from rrap_utils import get_rgb_diff, file_handler, save_image_from_np_array
 from rrap_constants import *
-
+from rrap_main import initial_predictions_images_directory
 @dataclass(repr=False, eq=False)
 class Image_For_Patch:
     name: str
@@ -20,7 +20,7 @@ class Image_For_Patch:
 
     def __post_init__(self, file_type, object_detector):
         self.image_as_np_array = self.open_image_as_rgb_np_array(file_type)
-        prediction_box = self.generate_predictions_for_image(object_detector, self.image_as_np_array, path = f"{INITIAL_PREDICTIONS_DIRECTORY}{self.name}.{file_type}")
+        prediction_box = self.generate_predictions_for_image(object_detector, self.image_as_np_array, path = f"{initial_predictions_images_directory}/{self.name}.{file_type}")
 
         #Customise patch location to centre of prediction box and patch to ratio of prediction box
         self.patch_shape, self.patch_location = self.cal_custom_patch_shape_and_location(prediction_box)
@@ -36,7 +36,7 @@ class Image_For_Patch:
         self.image_rgb_diff = get_rgb_diff(TRANSFORM(self.image_as_np_array[0]).clamp(0,1))
     
     def open_image_as_rgb_np_array(self, file_type) -> np.ndarray:
-        img = cv2.cvtColor(cv2.imread(f"{IMAGES_DIRECTORY}{self.name}.{file_type}"), cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(cv2.imread(f"{IMAGES_DIRECTORY}/{self.name}.{file_type}"), cv2.COLOR_BGR2RGB)
         return np.stack([img], axis=0).astype(np.float32)
 
     def generate_predictions_for_image(self, object_detector, image, path):
@@ -118,5 +118,6 @@ class Image_For_Patch:
                 int(prediction_centre_points[0] - (patch_shape[1]/2)))) 
 
     def append_to_training_progress_file(self, string):
-        path = f"{TRAINING_PROGRESS_DIRECTORY}{self.name}_training.txt"
+        from rrap_main import training_loss_printouts_directory
+        path = f"{training_loss_printouts_directory}/loss_prinouts_for_{self.name}.txt"
         file_handler(path = path, mode = "a", func= lambda f: f.write("\n" + string))
