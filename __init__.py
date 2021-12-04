@@ -8,3 +8,4 @@ from rrap_image_for_patch import *
 from rrap_main import *
 from rrap_utils import *
 from rrap_patch_generator import *
+from performance_eval import *

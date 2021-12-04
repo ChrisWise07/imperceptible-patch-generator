@@ -1,7 +1,8 @@
 import argparse
 import os
 
-from rrap_constants import ROOT_EXPERIMENT_DATA_DIRECTORY, IMAGES_DIRECTORY
+from rrap_constants import *
+from rrap_utils import *
 
 parser = argparse.ArgumentParser(description='Process hyperparameters')
 
@@ -41,11 +42,23 @@ create_experiment_data_directory(training_data_directory)
 create_experiment_data_directory(training_loss_printouts_directory)
 create_experiment_data_directory(loss_plots_directory)
 
-def main():
-    from rrap_patch_generator import generate_rrap_for_image
+def generate_rrap_for_image_and_calculate_mAP(image_path):
+    image_name, file_type = image_path.split(".")
 
+    ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", func=lambda f: json.load(f))
+
+    from rrap_patch_generator import generate_rrap_for_image
+    generate_rrap_for_image(image_name, file_type)
+
+    from performance_eval import calculate_mAP
+    adv_image_path = f"{final_patched_images_directory}/adv_{image_name}.{file_type}"
+    calculate_mAP(ground_truths[image_name], adv_image_path)
+
+
+
+def main():
     with os.scandir(IMAGES_DIRECTORY) as entries:
-        [generate_rrap_for_image(entry.name) for entry in entries]
+        [generate_rrap_for_image_and_calculate_mAP(entry.name) for entry in entries]
 
 if __name__ == "__main__":
     main()

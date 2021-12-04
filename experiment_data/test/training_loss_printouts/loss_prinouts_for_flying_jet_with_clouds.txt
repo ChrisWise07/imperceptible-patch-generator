@@ -1,0 +1,22 @@
+
+
+--- Initial Predictions for flying_jet_with_clouds ---
+predicted classes: ['airplane', 'person', 'airplane', 'airplane', 'person'] 
+predicted score: [0.9991026, 0.9275518, 0.9052526, 0.6929162, 0.667375]
+
+
+--- Generating adversarial patch for flying_jet_with_clouds ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1 losses --- 
+Current detection loss: 1.087261 
+Exponential rolling average detection loss: 0.010873 
+
+Current perceptibility loss: 410.074066 
+Exponential rolling average perceptibility loss: 4.100741 
+
+
+
+--- Final predictions for flying_jet_with_clouds with adversarial patch ---

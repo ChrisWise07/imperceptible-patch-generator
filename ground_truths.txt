@@ -1,0 +1,7 @@
+{
+    "flying_jet_with_clouds": [15.0, 50.0, 637.0, 365.0],
+    "flying_plane_at_distance": [316.0, 196.0, 400.0, 255.0],
+    "grounded_mobility_aircraft": [90.0, 95.0, 638.0, 335.0],
+    "jet_taking_off": [15.0, 140.0, 495.0, 315.0],
+    "underbelly_of_flying_jet": [100.0, 85.0, 605.0, 555.0]
+}
