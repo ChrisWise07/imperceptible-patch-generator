@@ -11,11 +11,11 @@ predicted score: [0.99901474, 0.9744357]
 --- Step Number: 0 ---
 
 --- Iteration Number 1 losses --- 
-Current detection loss: 0.783752 
-Exponential rolling average detection loss: 0.007838 
+Current detection loss: 0.790638 
+Exponential rolling average detection loss: 0.007906 
 
-Current perceptibility loss: 265.127228 
-Exponential rolling average perceptibility loss: 2.651272 
+Current perceptibility loss: 265.126801 
+Exponential rolling average perceptibility loss: 2.651268 
 
 
 

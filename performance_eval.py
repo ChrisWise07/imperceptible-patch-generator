@@ -1,32 +1,76 @@
-from typing import List
-from rrap_utils import generate_predictions, open_image_as_rgb_np_array
-from rrap_constants import FRCNN
+import torch
 
-#sourced from: https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/
+from typing import List
+from dataclasses import dataclass, field
+from torch.functional import Tensor
+from rrap_utils import generate_predictions, open_image_as_rgb_np_array
+from rrap_constants import FRCNN, EPSILON, LIMIT_OF_PREDICTIONS_PER_IMAGE
+
+#adapted from: https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/
 def bb_intersection_over_union(boxA, boxB):
-	# determine the (x, y)-coordinates of the intersection rectangle
 	xA = max(boxA[0], boxB[0])
 	yA = max(boxA[1], boxB[1])
 	xB = min(boxA[2], boxB[2])
 	yB = min(boxA[3], boxB[3])
-	# compute the area of intersection rectangle
-	interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
-	# compute the area of both the prediction and ground-truth
-	# rectangles
+
+	inter_rectangle_area = max(0, xB - xA + 1) * max(0, yB - yA + 1)
 	boxAArea = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1)
 	boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
-	# compute the intersection over union by taking the intersection
-	# area and dividing it by the sum of prediction + ground-truth
-	# areas - the interesection area
-	iou = interArea / float(boxAArea + boxBArea - interArea)
-	# return the intersection over union value
-	return iou
-    
 
-def calculate_mAP(ground_truth_bbox: List[tuple], adv_image_path: str):
-    predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
-                                                                                   image=open_image_as_rgb_np_array(path=adv_image_path), 
-                                                                                   threshold=0.5)
-    for prediction_bbox in predictions_boxes:
-        x1, y1, x2, y2 = prediction_bbox[0][0], prediction_bbox[0][1], prediction_bbox[1][0], prediction_bbox[1][1]
-        print(bb_intersection_over_union([x1, y1, x2, y2], ground_truth_bbox))
+	return inter_rectangle_area / float(boxAArea + boxBArea - inter_rectangle_area)
+	
+@dataclass(repr=False, eq=False)
+class mAP_calculator:
+	confidence_threshold: float
+	number_of_images: int
+	counter: int = 0
+	mAP: float = 0.0
+	unsorted_confidence_values: Tensor = field(init=False)
+	unsorted_tp: Tensor = field(init=False)
+	unsorted_fp: Tensor = field(init=False)
+
+	def __post_init__(self):
+		self.unsorted_confidence_values = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
+		self.unsorted_tp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
+		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
+
+	def map_confidence_to_tp_fp(self, ground_truth_bbox: List[tuple], adv_image_path: str):
+		predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
+																					   image=open_image_as_rgb_np_array(path=adv_image_path), 
+																					   threshold=self.confidence_threshold)
+
+		best_iou, best_iou_index = 0.5, 0
+
+		for pred_class, bbox, score in zip(predictions_class, predictions_boxes, predictions_score):
+			self.unsorted_confidence_values[self.counter] = float(score)
+			if (pred_class == "airplane"):
+				iou = bb_intersection_over_union([bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]], ground_truth_bbox)
+				if (iou > best_iou):
+					best_iou = iou
+					best_iou_index = self.counter
+				else:
+					self.unsorted_fp[self.counter] = 1
+			else:
+				self.unsorted_fp[self.counter] = 1
+
+			self.counter += 1
+
+		self.unsorted_tp[best_iou_index] = 1
+
+	def calculate_mAP(self) -> None:
+		self.sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
+
+		self.unsorted_tp = self.unsorted_tp[:self.counter]
+		self.unsorted_fp = self.unsorted_fp[:self.counter]
+		sorted_tp = torch.zeros_like(self.unsorted_tp)
+		sorted_fp = torch.zeros_like(self.unsorted_fp)
+
+		for i in indices:
+			sorted_tp[i], sorted_fp[i] = self.unsorted_tp[indices[i]], self.unsorted_fp[indices[i]]
+
+		tp_cum_sum = torch.cumsum(sorted_tp, dim=0)
+		fp_cum_sum = torch.cumsum(sorted_fp, dim=0)
+		precisions = torch.cat((torch.tensor([1]), torch.divide(tp_cum_sum, (tp_cum_sum + fp_cum_sum + EPSILON))))
+		recalls = torch.cat((torch.tensor([0]), torch.divide(tp_cum_sum, (self.number_of_images + EPSILON))))
+		
+		self.mAP = torch.trapz(precisions, recalls).item()

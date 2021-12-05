@@ -110,6 +110,10 @@ else:
         cuda_idx = torch.cuda.current_device()
         DEVICE = torch.device(f"cuda:{cuda_idx}")
 
+EPSILON = 1e-6
+
+LIMIT_OF_PREDICTIONS_PER_IMAGE = 100
+
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 IMAGES_DIRECTORY = f"{ROOT_DIRECTORY}/plane_images"

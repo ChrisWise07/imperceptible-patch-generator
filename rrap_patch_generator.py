@@ -5,7 +5,7 @@ from rrap_utils import *
 from rrap_image_for_patch import Image_For_Patch
 from rrap_constants import *
 from rrap_data_plotter import Data_Plotter
-from rrap_main import *
+from rrap_main import training_data_directory, final_patches_directory, final_patched_images_directory, final_predictions_images_directory, args 
 
 def generate_adversarial_patch(attack, image, step_num):
     image_name = image.name
@@ -32,7 +32,7 @@ def generate_adversarial_patch(attack, image, step_num):
     data_plotter.plot_training_data(image_name)
 
 def generate_rrap_for_image(image_name, file_type):
-    image = Image_For_Patch(name = image_name, object_detector=FRCNN, file_type=file_type)
+    image = Image_For_Patch(name=image_name, object_detector=FRCNN, file_type=file_type)
 
     if args.previous_experiment_directory_name:
         previous_training_data = get_previous_training_data(args.previous_experiment_directory_name, image_name)
