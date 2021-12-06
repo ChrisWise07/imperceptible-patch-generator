@@ -12,11 +12,13 @@ parser.add_argument('--max_iter', type=int, default=1000, help='Number of iterat
 parser.add_argument('--step_num', type=int, default=50, help='Number of steps to perform (default = 50)')
 parser.add_argument('--decep_lr', type=float, default=0.1, help='The deception learning rate (default = 0.1)')
 parser.add_argument('--percep_lr', type=float, default=0.5, help='The perception learning rate (default = 0.5)')
-parser.add_argument('--decay_rate', type=float, default=0.95, help='How much the deception is decayed (default = 0.95)')
+parser.add_argument('--decay_rate', type=float, default=0.95, help='The amount learning rates are decayed(default = 0.95)')
+parser.add_argument('--decay_freq', type=int, default=5, help='How frequent learnings rates are decayed (default = 5 steps)')
 parser.add_argument('--decep_mom', type=float, default=0.9, help='The deception update momentum (default = 0.9)')
 parser.add_argument('--percep_mom', type=float, default=0.9, help='The perception update momentum (default = 0.9)')
 parser.add_argument('--data_folder_name', type=str, default=None, help='Name of folder which data sits inside (default = None)')
 parser.add_argument('--previous_experiment_directory_name', type=str, default=None, help='Name of previous experiment directory; this is used to access previous training data (default = None)')
+parser.add_argument('--patch_configuration', type=str, default='image_segment', help='Starting patch configuration [random (r), image segment (is), black (b)] (default = is)')
 
 args = parser.parse_args()
 

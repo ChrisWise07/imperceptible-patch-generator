@@ -25,7 +25,7 @@ def generate_adversarial_patch(attack, image, step_num):
         record_attack_training_data(attack, step + 1)
         data_plotter.save_training_data(attack.get_loss_tracker(), attack.get_perceptibility_learning_rate(), attack.get_detection_learning_rate())   
 
-        if ((step + 1) % 5 == 0):
+        if ((step + 1) % args.decay_freq == 0):
             attack.decay_detection_learning_rate()
             #attack.decay_perceptibility_learning_rate()
 

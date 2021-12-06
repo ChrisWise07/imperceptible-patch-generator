@@ -40,6 +40,7 @@ from art import config
 from utils import get_perceptibility_gradients_of_patch
 from image_for_patch import Image_For_Patch
 from loss_tracker import Loss_Tracker
+from main import args
 
 if TYPE_CHECKING:
     from art.utils import OBJECT_DETECTOR_TYPE
@@ -144,23 +145,7 @@ class RobustDPatch(EvasionAttack):
             self.detection_learning_rate = detection_learning_rate
             self.perceptibility_learning_rate = perceptibility_learning_rate
             self.loss_tracker = Loss_Tracker()
-
-            #self._patch = image_to_patch.patch_section_of_image
-
-            #self._patch = np.full(shape=self.patch_shape, fill_value = 255, dtype=config.ART_NUMPY_DTYPE)
-
-            #"""
-            if self.estimator.clip_values is None:
-                self._patch = np.zeros(shape=self.patch_shape, dtype=config.ART_NUMPY_DTYPE)
-            else:
-                np.random.seed(0)
-                self._patch = (
-                    np.random.randint(0, 255, size=self.patch_shape)
-                    / 255
-                    * (self.estimator.clip_values[1] - self.estimator.clip_values[0])
-                    + self.estimator.clip_values[0]
-                ).astype(config.ART_NUMPY_DTYPE)
-            #"""    
+            self._patch = self.configure_starting_patch(args.patch_configuration)
             self._old_patch_detection_update = np.zeros_like(self._patch)
             self._old_patch_perceptibility_update = np.zeros_like(self._patch)
             
@@ -253,11 +238,13 @@ class RobustDPatch(EvasionAttack):
         ):
             raise ValueError("The patch (partially) lies outside the cropped image.")
         
-        num_batches = math.ceil(x.shape[0] / self.batch_size)
+        num_batches = math.ceil(x.shape[0]/self.batch_size)
+        min_perceptibility_learning_rate = self.perceptibility_learning_rate / 10
     
         for i_step in trange(self.max_iter, desc="RobustDPatch iteration", disable=not self.verbose):
             #if (i_step % 1 == 0):
             patch_gradients_old = np.zeros_like(self._patch)
+            cosine_perceptibility_learning_rate = (min_perceptibility_learning_rate) + 0.5 * (self.perceptibility_learning_rate - min_perceptibility_learning_rate) * (1 + cos(i_step/self.max_iter*pi))
 
             for i_batch in range(num_batches):
                 i_batch_start = i_batch * self.batch_size
@@ -295,16 +282,16 @@ class RobustDPatch(EvasionAttack):
             
             #update based on perceptibility
             patch_gradients = get_perceptibility_gradients_of_patch(self.image_to_patch, self.apply_patch(self.image_to_patch.image_as_np_array)[0], self.loss_tracker)
-            current_patch_perceptibility_update = patch_gradients  * -(self.perceptibility_learning_rate)
-            #self._patch += current_patch_perceptibility_update
-            self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
-            self._patch += self._old_patch_perceptibility_update
+            current_patch_perceptibility_update = patch_gradients * -(cosine_perceptibility_learning_rate)
+            self._patch += current_patch_perceptibility_update
+            #self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
+            #self._patch += self._old_patch_perceptibility_update
 
             if self.estimator.clip_values is not None:
                 self._patch = np.clip(self._patch, a_min=self.estimator.clip_values[0], a_max=self.estimator.clip_values[1])
 
             if (i_step + 1) % print_nth_num == 0:
-                self.loss_tracker.print_losses(self.image_to_patch, num_iter = i_step + 1)
+                self.loss_tracker.print_losses(self.image_to_patch, num_iter=i_step+1)
 
         return self._patch
 
@@ -577,3 +564,22 @@ class RobustDPatch(EvasionAttack):
     
     def get_training_data_path(self) -> str:
         return self.training_data_path
+
+    def random_patch(self) -> np.ndarray:
+        if self.estimator.clip_values is None:
+            self._patch = np.zeros(shape=self.patch_shape, dtype=config.ART_NUMPY_DTYPE)
+        else:
+            np.random.seed(0)
+            self._patch = (
+                np.random.randint(0, 255, size=self.patch_shape)
+                / 255
+                * (self.estimator.clip_values[1] - self.estimator.clip_values[0])
+                + self.estimator.clip_values[0]
+            ).astype(config.ART_NUMPY_DTYPE)
+
+    def configure_starting_patch(self, config_flag: str) -> np.ndarray:
+        return {
+            'is': self.image_to_patch.patch_section_of_image,
+            'b': np.full(shape=self.patch_shape, fill_value = 255, dtype=config.ART_NUMPY_DTYPE),
+            'r': self.random_patch()
+        }[config_flag]
