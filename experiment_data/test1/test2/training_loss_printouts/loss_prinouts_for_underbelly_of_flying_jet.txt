@@ -1,0 +1,24 @@
+
+
+--- Initial Predictions for underbelly_of_flying_jet ---
+predicted classes: ['airplane'] 
+predicted score: [0.996086]
+
+
+--- Generating adversarial patch for underbelly_of_flying_jet ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1 losses --- 
+Current detection loss: 0.040752 
+Exponential rolling average detection loss: 0.000408 
+
+Current perceptibility loss: 0.000000 
+Exponential rolling average perceptibility loss: 0.000000 
+
+
+
+--- Final predictions for underbelly_of_flying_jet with adversarial patch ---
+predicted classes: ['airplane'] 
+predicted score: [0.9960289]

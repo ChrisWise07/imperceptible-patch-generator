@@ -56,4 +56,8 @@ def generate_rrap_for_image(image_name, file_type):
     save_image_from_np_array(f"{final_patched_images_directory}/adv_{image_name}.{file_type}", image_adv_as_np_array[0])
 
     image.append_to_training_progress_file(f"\n\n--- Final predictions for {image_name} with adversarial patch ---")
-    plot_predictions(object_detector=FRCNN, image=image_adv_as_np_array, path=f"{final_predictions_images_directory}/adv_{image_name}.{file_type}", threshold=0.5)
+    predictions_class, predictions_boxes, predictions_score = plot_predictions(object_detector=FRCNN,
+                                                                               image=image_adv_as_np_array, 
+                                                                               path=f"{final_predictions_images_directory}/adv_{image_name}.{file_type}", 
+                                                                               threshold=0.5)
+    image.append_to_training_progress_file(f"predicted classes: {str(predictions_class)} \npredicted score: {str(predictions_score)}")

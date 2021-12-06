@@ -9,7 +9,7 @@ from torch import Tensor
 from matplotlib.ticker import (MultipleLocator, AutoLocator, AutoMinorLocator)
 from typing import List, Tuple
 from differential_color_functions import rgb2lab_diff, ciede2000_diff
-from constants import DEVICE, TRANSFORM, ROOT_EXPERIMENT_DATA_DIRECTORY, COCO_INSTANCE_CATEGORY_NAMES
+from constants import DEVICE, TRANSFORM, ROOT_EXPERIMENT_DATA_DIRECTORY, COCO_INSTANCE_CATEGORY_NAMES, EPSILON
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
@@ -26,7 +26,7 @@ def save_image_from_np_array(path, np_array):
 def get_rgb_diff(image_tensor):
         return rgb2lab_diff(torch.stack([image_tensor], dim=0), DEVICE) 
 
-def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patched_image, loss_tracker):
+def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patched_image, loss_tracker) -> np.ndarray:
         patch_image_tensor = TRANSFORM(patched_image).clamp(0,1).requires_grad_(True)
         patch_image_rgb_diff = get_rgb_diff(patch_image_tensor)
         d_map=ciede2000_diff(og_image_rgb_diff, patch_image_rgb_diff, DEVICE).unsqueeze(1)
@@ -34,7 +34,7 @@ def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patch
         perceptibility_loss = perceptibility_dis.sum()
         loss_tracker.update_perceptibility_loss(perceptibility_loss.item())
         perceptibility_loss.backward()
-        return (patch_image_tensor.grad/torch.norm(patch_image_tensor.grad.view(1,-1),dim=1)).permute(1,2,0).numpy()
+        return (patch_image_tensor.grad/(torch.norm(patch_image_tensor.grad.view(1,-1),dim=1) + EPSILON)).permute(1,2,0).numpy()
 
 def get_perceptibility_gradients_of_patch(og_image_object, patched_image, loss_tracker):
         perceptibility_gradients = calculate_perceptibility_gradients_of_patched_image(og_image_object.image_rgb_diff, patched_image, loss_tracker)
