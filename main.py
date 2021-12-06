@@ -2,9 +2,8 @@ import argparse
 import os
 import json
 
-from typing import List
-from rrap_constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
-from rrap_utils import file_handler
+from constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
+from utils import file_handler
 from performance_eval import mAP_calculator
 
 parser = argparse.ArgumentParser(description='Process hyperparameters')
@@ -36,7 +35,7 @@ training_data_directory = f"{current_experiment_data_directory}/training_data"
 training_loss_printouts_directory = f"{current_experiment_data_directory}/training_loss_printouts"
 loss_plots_directory = f"{current_experiment_data_directory}/loss_plots_directory"
 
-""""
+#"""
 create_experiment_data_directory(current_experiment_data_directory)
 create_experiment_data_directory(initial_predictions_images_directory)
 create_experiment_data_directory(final_patches_directory)
@@ -45,7 +44,7 @@ create_experiment_data_directory(final_patched_images_directory)
 create_experiment_data_directory(training_data_directory)
 create_experiment_data_directory(training_loss_printouts_directory)
 create_experiment_data_directory(loss_plots_directory)
-"""
+#"""
 
 ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", func=lambda f: json.load(f))
 
@@ -53,12 +52,12 @@ confidence_thresholds = [0.001, 0.1, 0.5]
 mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=len(ground_truths)) for threshold in confidence_thresholds]
 
 def main():
-    from rrap_patch_generator import generate_rrap_for_image
+    from patch_generator import generate_rrap_for_image
 
     with os.scandir(IMAGES_DIRECTORY) as entries:
         for entry in entries:
             image_name, file_type = entry.name.split(".")
-            #generate_rrap_for_image(image_name, file_type)
+            generate_rrap_for_image(image_name, file_type)
             adv_image_path = f"{final_patched_images_directory}/adv_{image_name}.{file_type}"
             [calculator.map_confidence_to_tp_fp(ground_truths[image_name], adv_image_path) for calculator in mAP_calculators]
 

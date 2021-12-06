@@ -1,11 +1,11 @@
 import numpy as np
 
 from custom_dpatch_robust import RobustDPatch
-from rrap_utils import *
-from rrap_image_for_patch import Image_For_Patch
-from rrap_constants import *
-from rrap_data_plotter import Data_Plotter
-from rrap_main import training_data_directory, final_patches_directory, final_patched_images_directory, final_predictions_images_directory, args 
+from utils import get_previous_steps, get_previous_training_data, record_attack_training_data, save_image_from_np_array, plot_predictions 
+from image_for_patch import Image_For_Patch
+from constants import FRCNN
+from data_plotter import Data_Plotter
+from main import training_data_directory, final_patches_directory, final_patched_images_directory, final_predictions_images_directory, args 
 
 def generate_adversarial_patch(attack, image, step_num):
     image_name = image.name

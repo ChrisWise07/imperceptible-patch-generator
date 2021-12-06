@@ -3,9 +3,9 @@ import numpy as np
 from dataclasses import InitVar, dataclass, field
 from torch.functional import Tensor
 from typing import Tuple
-from rrap_utils import *
-from rrap_constants import *
-from rrap_main import initial_predictions_images_directory
+from utils import file_handler, plot_predictions, get_rgb_diff, open_image_as_rgb_np_array
+from constants import IMAGES_DIRECTORY, TRANSFORM
+from main import initial_predictions_images_directory, training_loss_printouts_directory 
 
 @dataclass(repr=False, eq=False)
 class Image_For_Patch:
@@ -53,6 +53,5 @@ class Image_For_Patch:
                 int(prediction_centre_points[0] - (patch_shape[1]/2)))) 
 
     def append_to_training_progress_file(self, string):
-        from rrap_main import training_loss_printouts_directory
         path = f"{training_loss_printouts_directory}/loss_prinouts_for_{self.name}.txt"
         file_handler(path = path, mode = "a", func= lambda f: f.write("\n" + string))

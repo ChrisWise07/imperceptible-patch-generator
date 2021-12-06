@@ -3,8 +3,8 @@ import torch
 from typing import List
 from dataclasses import dataclass, field
 from torch.functional import Tensor
-from rrap_utils import generate_predictions, open_image_as_rgb_np_array
-from rrap_constants import FRCNN, EPSILON, LIMIT_OF_PREDICTIONS_PER_IMAGE
+from utils import generate_predictions, open_image_as_rgb_np_array
+from constants import FRCNN, EPSILON, LIMIT_OF_PREDICTIONS_PER_IMAGE, DEVICE
 
 #adapted from: https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/
 def bb_intersection_over_union(boxA, boxB):
@@ -30,9 +30,9 @@ class mAP_calculator:
 	unsorted_fp: Tensor = field(init=False)
 
 	def __post_init__(self):
-		self.unsorted_confidence_values = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
-		self.unsorted_tp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
-		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE)
+		self.unsorted_confidence_values = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.float, device=DEVICE)
+		self.unsorted_tp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
+		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
 
 	def map_confidence_to_tp_fp(self, ground_truth_bbox: List[tuple], adv_image_path: str):
 		predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
@@ -58,19 +58,17 @@ class mAP_calculator:
 		self.unsorted_tp[best_iou_index] = 1
 
 	def calculate_mAP(self) -> None:
-		self.sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
+		sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
 
 		self.unsorted_tp = self.unsorted_tp[:self.counter]
 		self.unsorted_fp = self.unsorted_fp[:self.counter]
-		sorted_tp = torch.zeros_like(self.unsorted_tp)
-		sorted_fp = torch.zeros_like(self.unsorted_fp)
-
-		for i in indices:
-			sorted_tp[i], sorted_fp[i] = self.unsorted_tp[indices[i]], self.unsorted_fp[indices[i]]
-
-		tp_cum_sum = torch.cumsum(sorted_tp, dim=0)
-		fp_cum_sum = torch.cumsum(sorted_fp, dim=0)
-		precisions = torch.cat((torch.tensor([1]), torch.divide(tp_cum_sum, (tp_cum_sum + fp_cum_sum + EPSILON))))
-		recalls = torch.cat((torch.tensor([0]), torch.divide(tp_cum_sum, (self.number_of_images + EPSILON))))
+		sorted_tp = torch.tensor([self.unsorted_tp[i] for i in indices], dtype=torch.short, device=DEVICE)
+		sorted_fp = torch.tensor([self.unsorted_fp[i] for i in indices], dtype=torch.short, device=DEVICE)
+		tp_cum_sum = torch.cumsum(sorted_tp, dim=0, dtype=torch.short)
+		fp_cum_sum = torch.cumsum(sorted_fp, dim=0, dtype=torch.short)
+		precisions = torch.divide(tp_cum_sum, (tp_cum_sum + fp_cum_sum + EPSILON))
+		precisions = torch.cat((torch.tensor([1], dtype=torch.float, device=DEVICE), precisions))
+		recalls = torch.divide(tp_cum_sum, (self.number_of_images + EPSILON))
+		recalls = torch.cat((torch.tensor([0], dtype=torch.float, device=DEVICE), recalls))
 		
 		self.mAP = torch.trapz(precisions, recalls).item()

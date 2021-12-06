@@ -37,9 +37,9 @@ from art.attacks.attack import EvasionAttack
 from art.estimators.estimator import BaseEstimator, LossGradientsMixin
 from art.estimators.object_detection.object_detector import ObjectDetectorMixin
 from art import config
-from rrap_utils import get_perceptibility_gradients_of_patch
-from rrap_image_for_patch import Image_For_Patch
-from rrap_loss_tracker import Loss_Tracker
+from utils import get_perceptibility_gradients_of_patch
+from image_for_patch import Image_For_Patch
+from loss_tracker import Loss_Tracker
 
 if TYPE_CHECKING:
     from art.utils import OBJECT_DETECTOR_TYPE

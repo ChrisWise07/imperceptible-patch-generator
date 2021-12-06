@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
-from rrap_utils import plot_data
+from utils import plot_data
 
 @dataclass(frozen = True, repr=False, eq=False)
 class Data_Plotter:

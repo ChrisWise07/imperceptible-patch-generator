@@ -9,7 +9,7 @@ from torch import Tensor
 from matplotlib.ticker import (MultipleLocator, AutoLocator, AutoMinorLocator)
 from typing import List, Tuple
 from differential_color_functions import rgb2lab_diff, ciede2000_diff
-from rrap_constants import *
+from constants import DEVICE, TRANSFORM, ROOT_EXPERIMENT_DATA_DIRECTORY, COCO_INSTANCE_CATEGORY_NAMES
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
@@ -75,7 +75,7 @@ def record_attack_training_data(attack, step_number):
 
 
 def plot_data(rolling_loss_history, current_loss_history, lr_history, image_name, loss_type):
-        from rrap_main import loss_plots_directory
+        from main import loss_plots_directory
         # create figure and axis objects with subplots()
         fig,ax = plt.subplots()
 
