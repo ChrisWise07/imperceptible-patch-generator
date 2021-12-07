@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import sys
 
 from constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
 from utils import file_handler
