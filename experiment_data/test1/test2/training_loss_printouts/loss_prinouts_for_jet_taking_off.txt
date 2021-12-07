@@ -11,8 +11,8 @@ predicted score: [0.99901474, 0.9744357]
 --- Step Number: 0 ---
 
 --- Iteration Number 1 losses --- 
-Current detection loss: 0.792532 
-Exponential rolling average detection loss: 0.007925 
+Current detection loss: 0.795356 
+Exponential rolling average detection loss: 0.007954 
 
 Current perceptibility loss: 0.000000 
 Exponential rolling average perceptibility loss: 0.000000 
@@ -21,4 +21,4 @@ Exponential rolling average perceptibility loss: 0.000000
 
 --- Final predictions for jet_taking_off with adversarial patch ---
 predicted classes: ['airplane', 'fire hydrant'] 
-predicted score: [0.99901056, 0.9744357]
+predicted score: [0.9990101, 0.9744357]

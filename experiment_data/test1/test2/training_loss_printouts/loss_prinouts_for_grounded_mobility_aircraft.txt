@@ -11,8 +11,8 @@ predicted score: [0.988858, 0.6542098, 0.55713266]
 --- Step Number: 0 ---
 
 --- Iteration Number 1 losses --- 
-Current detection loss: 1.042354 
-Exponential rolling average detection loss: 0.010424 
+Current detection loss: 1.047778 
+Exponential rolling average detection loss: 0.010478 
 
 Current perceptibility loss: 3.570680 
 Exponential rolling average perceptibility loss: 0.035707 
@@ -21,4 +21,4 @@ Exponential rolling average perceptibility loss: 0.035707
 
 --- Final predictions for grounded_mobility_aircraft with adversarial patch ---
 predicted classes: ['airplane', 'truck', 'person'] 
-predicted score: [0.98936206, 0.6542098, 0.55713266]
+predicted score: [0.9893742, 0.6542098, 0.55713314]
