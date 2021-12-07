@@ -1,8 +1,6 @@
 import argparse
 import os
 import json
-import sys
-print(sys.path)
 
 from constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
 from utils import file_handler
