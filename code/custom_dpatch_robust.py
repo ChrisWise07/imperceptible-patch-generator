@@ -145,7 +145,7 @@ class RobustDPatch(EvasionAttack):
             self.detection_learning_rate = detection_learning_rate
             self.perceptibility_learning_rate = perceptibility_learning_rate
             self.loss_tracker = Loss_Tracker()
-            self._patch = self.configure_starting_patch(args.patch_configuration)
+            self._patch = self.configure_starting_patch(args.patch_config)
             self._old_patch_detection_update = np.zeros_like(self._patch)
             self._old_patch_perceptibility_update = np.zeros_like(self._patch)
             
@@ -567,10 +567,10 @@ class RobustDPatch(EvasionAttack):
 
     def random_patch(self) -> np.ndarray:
         if self.estimator.clip_values is None:
-            self._patch = np.zeros(shape=self.patch_shape, dtype=config.ART_NUMPY_DTYPE)
+            return np.zeros(shape=self.patch_shape, dtype=config.ART_NUMPY_DTYPE)
         else:
             np.random.seed(0)
-            self._patch = (
+            return (
                 np.random.randint(0, 255, size=self.patch_shape)
                 / 255
                 * (self.estimator.clip_values[1] - self.estimator.clip_values[0])

@@ -19,7 +19,7 @@ def generate_adversarial_patch(attack, image, step_num):
         image.append_to_training_progress_file(f"\n\n--- Step Number: {step} ---")
         
         #train adv patch to trick object detector and not to be perceptibile
-        attack.generate(x=image_copies, print_nth_num=1, y=None)                    
+        attack.generate(x=image_copies, print_nth_num=args.loss_print_freq, y=None)                    
 
         #Save adv patch and training data every step
         record_attack_training_data(attack, step + 1)
