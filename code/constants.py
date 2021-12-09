@@ -98,17 +98,15 @@ COCO_INSTANCE_CATEGORY_NAMES = [
     "toothbrush",
 ]
 
-TRANSFORM = transforms.Compose([transforms.ToTensor(),])
+TRANSFORM = transforms.ToTensor()
 
-FRCNN = PyTorchFasterRCNN(
-        clip_values=(0, 255), attack_losses=["loss_classifier", "loss_box_reg", "loss_objectness", "loss_rpn_box_reg"]
-    )
+FRCNN = PyTorchFasterRCNN(clip_values=(0, 255), 
+                          attack_losses=["loss_classifier", "loss_box_reg", "loss_objectness", "loss_rpn_box_reg"])
 
-if not torch.cuda.is_available():
-        DEVICE = torch.device("cpu")
+if torch.cuda.is_available():
+        DEVICE = torch.device(f"cuda:{torch.cuda.current_device()}")
 else:
-        cuda_idx = torch.cuda.current_device()
-        DEVICE = torch.device(f"cuda:{cuda_idx}")
+        DEVICE = torch.device("cpu")
 
 EPSILON = 1e-6
 

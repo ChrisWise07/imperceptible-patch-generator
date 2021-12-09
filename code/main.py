@@ -7,7 +7,6 @@ from utils import file_handler
 from performance_eval import mAP_calculator
 
 parser = argparse.ArgumentParser(description='Process hyperparameters')
-
 parser.add_argument('--max_iter', type=int, default=1000, help='Number of iterations per steps (default = 1000)') 
 parser.add_argument('--step_num', type=int, default=50, help='Number of steps to perform (default = 50)')
 parser.add_argument('--decep_lr', type=float, default=0.1, help='The deception learning rate (default = 0.1)')
@@ -38,7 +37,6 @@ training_data_directory = f"{current_experiment_data_directory}/training_data"
 training_loss_printouts_directory = f"{current_experiment_data_directory}/training_loss_printouts"
 loss_plots_directory = f"{current_experiment_data_directory}/loss_plots_directory"
 
-#"""
 create_experiment_data_directory(current_experiment_data_directory)
 create_experiment_data_directory(initial_predictions_images_directory)
 create_experiment_data_directory(final_patches_directory)
@@ -47,15 +45,17 @@ create_experiment_data_directory(final_patched_images_directory)
 create_experiment_data_directory(training_data_directory)
 create_experiment_data_directory(training_loss_printouts_directory)
 create_experiment_data_directory(loss_plots_directory)
-#"""
 
-file_handler(path = f"{current_experiment_data_directory}/hyperparameters.txt", mode = "w", func = lambda f: json.dump(vars(args), f, indent=4))
+file_handler(path = f"{current_experiment_data_directory}/hyperparameters.txt", mode = "w", 
+             func = lambda f: json.dump(vars(args), f, indent=4))
 
-ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", func=lambda f: json.load(f))
+ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", 
+                             func=lambda f: json.load(f))
+
 num_of_examples = len(ground_truths)
 
 confidence_thresholds = [0.001, 0.1, 0.5]
-mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=num_of_examples) for threshold in confidence_thresholds]
+mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=len(ground_truths)) for threshold in confidence_thresholds]
 
 def main():
     from patch_generator import generate_rrap_for_image
@@ -88,7 +88,8 @@ def main():
         total_mAP += calculator.mAP
     results_string += f"\nThe mAP averaged across all confidence thresholds = {total_mAP/len(mAP_calculators)}"
 
-    file_handler(path=f"{current_experiment_data_directory}/experiment_results.txt", mode="w", func=lambda f: f.write(results_string))
+    file_handler(path=f"{current_experiment_data_directory}/experiment_results.txt", mode="w", 
+                 func=lambda f: f.write(results_string))
 
 if __name__ == "__main__":
     main()

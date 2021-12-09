@@ -22,18 +22,23 @@ class Image_For_Patch:
         self.image_as_np_array = open_image_as_rgb_np_array(path=f"{IMAGES_DIRECTORY}/{self.name}.{file_type}")
 
         self.append_to_training_progress_file(f"\n--- Initial Predictions for {self.name} ---")
-        predictions_class, predictions_boxes, predictions_score = plot_predictions(object_detector, self.image_as_np_array, path = f"{initial_predictions_images_directory}/{self.name}.{file_type}", threshold=0.5)
+        predictions_class, predictions_boxes, predictions_score = plot_predictions(object_detector, 
+                                                                                   self.image_as_np_array, 
+                                                                                   path = f"{initial_predictions_images_directory}/{self.name}.{file_type}", 
+                                                                                   threshold=0.5)
+
         self.append_to_training_progress_file(f"predicted classes: {str(predictions_class)} \npredicted score: {str(predictions_score)}")
 
         #Customise patch location to centre of prediction box and patch to ratio of prediction box
         self.patch_shape, self.patch_location = self.cal_custom_patch_shape_and_location(predictions_boxes[0])
 
-        self.patch_section_of_image = self.image_as_np_array[0][self.patch_location[0]:self.patch_location[0] + self.patch_shape[0], 
-                                                                self.patch_location[1]:self.patch_location[1] + self.patch_shape[1], 
-                                                                ...]
-
+        self.patch_section_of_image = self.image_as_np_array[0][self.patch_location[0] : self.patch_location[0]+self.patch_shape[0], 
+                                                                self.patch_location[1] : self.patch_location[1]+self.patch_shape[1], 
+                                                                ...
+                                                                ]
+                                                                
         #Calculate RGB perceptability of image
-        self.image_rgb_diff = get_rgb_diff(TRANSFORM(self.image_as_np_array[0]).clamp(0,1))
+        self.image_rgb_diff = get_rgb_diff(TRANSFORM(self.patch_section_of_image.astype(np.uint8)))
 
     def cal_custom_patch_shape_and_location(self, prediction_box):
         prediction_box_width_height = (prediction_box[1][0] - prediction_box[0][0], prediction_box[1][1] - prediction_box[0][1])

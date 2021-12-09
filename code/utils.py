@@ -19,30 +19,22 @@ class NumpyArrayEncoder(JSONEncoder):
                 return obj.detach().numpy().tolist()
         return JSONEncoder.default(self, obj)
 
-def save_image_from_np_array(path, np_array):
+def save_image_from_np_array(path, np_array) -> None:
         plt.imsave(path, np.uint8(np_array))
         plt.close
 
-def get_rgb_diff(image_tensor):
+def get_rgb_diff(image_tensor) -> Tensor:
         return rgb2lab_diff(torch.stack([image_tensor], dim=0), DEVICE) 
 
-def calculate_perceptibility_gradients_of_patched_image(og_image_rgb_diff, patched_image, loss_tracker) -> np.ndarray:
-        patch_image_tensor = TRANSFORM(patched_image).clamp(0,1).requires_grad_(True)
-        patch_image_rgb_diff = get_rgb_diff(patch_image_tensor)
-        d_map=ciede2000_diff(og_image_rgb_diff, patch_image_rgb_diff, DEVICE).unsqueeze(1)
+def calculate_patch_perceptibility_update(og_image_rgb_diff: Tensor, patched_image: np.ndarray, loss_tracker) -> np.ndarray:
+        patch_tensor = TRANSFORM(patched_image.astype(np.uint8)).requires_grad_(True)
+        patch_rgb_diff = get_rgb_diff(patch_tensor)
+        d_map=ciede2000_diff(og_image_rgb_diff, patch_rgb_diff, DEVICE).unsqueeze(1)
         perceptibility_dis=torch.norm(d_map.view(1,-1),dim=1)
         perceptibility_loss = perceptibility_dis.sum()
         loss_tracker.update_perceptibility_loss(perceptibility_loss.item())
         perceptibility_loss.backward()
-        return (patch_image_tensor.grad/(torch.norm(patch_image_tensor.grad.view(1,-1),dim=1) + EPSILON)).permute(1,2,0).numpy()
-
-def get_perceptibility_gradients_of_patch(og_image_object, patched_image, loss_tracker):
-        perceptibility_gradients = calculate_perceptibility_gradients_of_patched_image(og_image_object.image_rgb_diff, patched_image, loss_tracker)
-        return perceptibility_gradients[
-                og_image_object.patch_location[0]:og_image_object.patch_location[0] + og_image_object.patch_shape[0], 
-                og_image_object.patch_location[1]:og_image_object.patch_location[1] + og_image_object.patch_shape[1], 
-                ...
-                ]
+        return (patch_tensor.grad / (torch.norm(patch_tensor.grad.view(1,-1), dim=1) + EPSILON)).permute(1,2,0).numpy()
 
 def file_handler(path, mode, func):
         try:

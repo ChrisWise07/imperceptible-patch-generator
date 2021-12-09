@@ -37,7 +37,7 @@ from art.attacks.attack import EvasionAttack
 from art.estimators.estimator import BaseEstimator, LossGradientsMixin
 from art.estimators.object_detection.object_detector import ObjectDetectorMixin
 from art import config
-from utils import get_perceptibility_gradients_of_patch
+from utils import calculate_patch_perceptibility_update
 from image_for_patch import Image_For_Patch
 from loss_tracker import Loss_Tracker
 from main import args
@@ -244,7 +244,7 @@ class RobustDPatch(EvasionAttack):
         for i_step in trange(self.max_iter, desc="RobustDPatch iteration", disable=not self.verbose):
             #if (i_step % 1 == 0):
             patch_gradients_old = np.zeros_like(self._patch)
-            cosine_perceptibility_learning_rate = (min_perceptibility_learning_rate) + 0.5 * (self.perceptibility_learning_rate - min_perceptibility_learning_rate) * (1 + cos(i_step/self.max_iter*pi))
+            cosine_perceptibility_learning_rate = min_perceptibility_learning_rate + (0.5 * (self.perceptibility_learning_rate - min_perceptibility_learning_rate)) * (1 + cos((i_step / self.max_iter) * pi))
 
             for i_batch in range(num_batches):
                 i_batch_start = i_batch * self.batch_size
@@ -276,12 +276,13 @@ class RobustDPatch(EvasionAttack):
 
             #update patch based on detection
             current_patch_detection_update = np.sign(patch_gradients_old) * (1 - 2 * int(self.targeted)) * self.detection_learning_rate
-            #self._patch += current_patch_detection_update 
             self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
             self._patch += self._old_patch_detection_update
-            
+
             #update based on perceptibility
-            patch_gradients = get_perceptibility_gradients_of_patch(self.image_to_patch, self.apply_patch(self.image_to_patch.image_as_np_array)[0], self.loss_tracker)
+            patch_gradients = calculate_patch_perceptibility_update(self.image_to_patch.image_rgb_diff, 
+                                                                    self._patch, 
+                                                                    self.loss_tracker)
             current_patch_perceptibility_update = patch_gradients * -(cosine_perceptibility_learning_rate)
             self._patch += current_patch_perceptibility_update
             #self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
