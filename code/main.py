@@ -63,7 +63,7 @@ def main():
     total_losses = {"Average detection loss": 0.0, 
                     "Average rolling detection loss": 0.0, 
                     "Average PerC distance": 0.0, 
-                    "Average rolling PerC distacne": 0.0}
+                    "Average rolling PerC distance": 0.0}
     results_string = ""
 
     with os.scandir(IMAGES_DIRECTORY) as entries:

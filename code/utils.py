@@ -28,8 +28,8 @@ def get_rgb_diff(image_tensor) -> Tensor:
 
 def calculate_patch_perceptibility_update(og_image_rgb_diff: Tensor, patched_image: np.ndarray, loss_tracker) -> np.ndarray:
         patch_tensor = TRANSFORM(patched_image.astype(np.uint8)).requires_grad_()
-        d_map=ciede2000_diff(og_image_rgb_diff, get_rgb_diff(patch_tensor), DEVICE).unsqueeze(1)
-        perceptibility_loss=torch.norm(d_map.view(1,-1),dim=1).sum()
+        d_map = ciede2000_diff(og_image_rgb_diff, get_rgb_diff(patch_tensor), DEVICE).unsqueeze(1)
+        perceptibility_loss = torch.norm(d_map.view(1,-1),dim=1).sum()
         loss_tracker.update_perceptibility_loss(perceptibility_loss.item())
         perceptibility_loss.backward()
         return (patch_tensor.grad / (torch.norm(patch_tensor.grad.view(1,-1), dim=1) + EPSILON)).permute(1,2,0).numpy()
@@ -37,8 +37,7 @@ def calculate_patch_perceptibility_update(og_image_rgb_diff: Tensor, patched_ima
 def file_handler(path, mode, func):
         try:
                 with open(path, mode) as f:
-                        value = func(f)
-                return value
+                        return func(f)
         except FileNotFoundError:
                 return 0
 
