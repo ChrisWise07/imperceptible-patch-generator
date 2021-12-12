@@ -57,7 +57,7 @@ class mAP_calculator:
 
 		self.unsorted_tp[best_iou_index] = 1
 
-	def calculate_mAP(self) -> None:
+	def calculate_mAP(self) -> float:
 		sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
 
 		self.unsorted_tp = self.unsorted_tp[:self.counter]
@@ -72,3 +72,4 @@ class mAP_calculator:
 		recalls = torch.cat((torch.tensor([0], dtype=torch.float, device=DEVICE), recalls))
 		
 		self.mAP = torch.trapz(precisions, recalls).item()
+		return self.mAP 

@@ -21,13 +21,14 @@ class Image_For_Patch:
     def __post_init__(self, file_type, object_detector):
         self.image_as_np_array = open_image_as_rgb_np_array(path=f"{IMAGES_DIRECTORY}/{self.name}.{file_type}")
 
-        self.append_to_training_progress_file(f"\n--- Initial Predictions for {self.name} ---")
         predictions_class, predictions_boxes, predictions_score = plot_predictions(object_detector, 
                                                                                    self.image_as_np_array, 
                                                                                    path = f"{initial_predictions_images_directory}/{self.name}.{file_type}", 
                                                                                    threshold=0.5)
 
-        self.append_to_training_progress_file(f"predicted classes: {str(predictions_class)} \npredicted score: {str(predictions_score)}")
+        self.append_to_training_progress_file(f"\n--- Initial Predictions for {self.name} ---" + 
+                                              f"\npredicted classes: {str(predictions_class)}" +
+                                              f"\npredicted score: {str(predictions_score)}")
 
         #Customise patch location to centre of prediction box and patch to ratio of prediction box
         self.patch_shape, self.patch_location = self.cal_custom_patch_shape_and_location(predictions_boxes[0])

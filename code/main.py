@@ -1,4 +1,5 @@
 import argparse
+from json import encoder
 import os
 import json
 
@@ -47,7 +48,7 @@ create_experiment_data_directory(training_loss_printouts_directory)
 create_experiment_data_directory(loss_plots_directory)
 
 file_handler(path = f"{current_experiment_data_directory}/hyperparameters.txt", mode = "w", 
-             func = lambda f: json.dump(vars(args), f, indent=4))
+             func = lambda f: f.write(json.dumps(vars(args), indent=4)))
 
 ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", 
                              func=lambda f: json.load(f))
@@ -64,27 +65,25 @@ def main():
                     "Average rolling detection loss": 0.0, 
                     "Average PerC distance": 0.0, 
                     "Average rolling PerC distance": 0.0}
-    results_string = ""
+    file_name_type = os.listdir(IMAGES_DIRECTORY)
 
-    with os.scandir(IMAGES_DIRECTORY) as entries:
-        for entry in entries:
-            image_name, file_type = entry.name.split(".")
+    for name_type in file_name_type:
+        name, type = name_type.split(".")
 
-            for loss, loss_type in zip(generate_rrap_for_image(image_name, file_type), list(total_losses.keys())):
-                total_losses[loss_type] += loss
+        for loss, loss_type in zip(generate_rrap_for_image(name, type), list(total_losses.keys())):
+            total_losses[loss_type] += loss
 
-            adv_image_path = f"{final_patched_images_directory}/adv_{image_name}.{file_type}"
-            [calculator.map_confidence_to_tp_fp(ground_truths[image_name], adv_image_path) for calculator in mAP_calculators]
+        adv_image_path = f"{final_patched_images_directory}/adv_{name}.{type}"
+        [calculator.map_confidence_to_tp_fp(ground_truths[name], adv_image_path) for calculator in mAP_calculators]
 
-    results_string += "--- Average detection losses & PerC distances"
+    results_string = "--- Average detection losses & PerC distances ---"
     for loss_type, loss_total in total_losses.items():
         results_string += f"\n{loss_type}: {loss_total/num_of_examples}"       
 
     results_string += "\n\n--- mAP Results ---"
     total_mAP = 0.0
     for calculator in mAP_calculators:
-        calculator.calculate_mAP()
-        results_string += f"\nThe mAP for confidence threshold {calculator.confidence_threshold} = {calculator.mAP}"
+        results_string += f"\nThe mAP for confidence threshold {calculator.confidence_threshold} = {calculator.calculate_mAP()}"
         total_mAP += calculator.mAP
     results_string += f"\nThe mAP averaged across all confidence thresholds = {total_mAP/len(mAP_calculators)}"
 

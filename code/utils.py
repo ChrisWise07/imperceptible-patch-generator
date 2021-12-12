@@ -15,8 +15,6 @@ class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
                 return obj.tolist()
-        if isinstance(obj, Tensor):
-                return obj.detach().numpy().tolist()
         return JSONEncoder.default(self, obj)
 
 def save_image_from_np_array(path, np_array) -> None:
@@ -58,15 +56,15 @@ def record_attack_training_data(attack, step_number):
         training_data["loss_data"] = {"perceptibility_loss": loss_tracker.rolling_perceptibility_loss, 
                                       "detection_loss": loss_tracker.rolling_detection_loss}
         training_data["patch_np_array"] = attack.get_patch()
-        training_data["old_patch_detection_update"] = np.array(attack.get_old_patch_detection_update())
-        training_data["old_patch_perceptibility_update"] = np.array(attack.get_old_patch_perceptibility_update())
-        file_handler(path = attack.get_training_data_path(), mode = "w", func = lambda f: json.dump(training_data, f, cls=NumpyArrayEncoder))
+        training_data["old_patch_detection_update"] = attack.get_old_patch_detection_update()
+        training_data["old_patch_perceptibility_update"] = attack.get_old_patch_perceptibility_update()
+        file_handler(path = attack.get_training_data_path(), mode = "w", func = lambda f: f.write(json.dumps(training_data, cls=NumpyArrayEncoder)))
 
 
 def plot_data(rolling_loss_history, current_loss_history, lr_history, image_name, loss_type):
         from main import loss_plots_directory
         # create figure and axis objects with subplots()
-        fig,ax = plt.subplots()
+        fig, ax = plt.subplots()
 
         # set x-axis label
         ax.set_xlabel("Steps",fontsize=10)
