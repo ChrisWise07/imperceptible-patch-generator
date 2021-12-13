@@ -1,5 +1,4 @@
 import argparse
-from json import encoder
 import os
 import json
 
