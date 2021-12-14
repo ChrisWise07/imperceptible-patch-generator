@@ -3,7 +3,7 @@ import numpy as np
 from dataclasses import InitVar, dataclass, field
 from torch.functional import Tensor
 from typing import Tuple
-from utils import file_handler, plot_predictions, get_rgb_diff, open_image_as_rgb_np_array
+from utils import file_handler, plot_predictions, get_lab_diff, open_image_as_rgb_np_array
 from constants import IMAGES_DIRECTORY, TRANSFORM
 from main import initial_predictions_images_directory, training_loss_printouts_directory 
 
@@ -13,7 +13,7 @@ class Image_For_Patch:
     file_type: InitVar[str] 
     object_detector: InitVar[None]
     image_as_np_array: np.ndarray = field(init=False)
-    patch_size: Tuple[int, int, int] = field(init=False)
+    patch_shape: Tuple[int, int, int] = field(init=False)
     patch_location: Tuple[int, int] = field(init=False)
     patch_section_of_image: np.ndarray = field(init=False)
     image_rgb_diff: Tensor = field(init=False)
@@ -37,18 +37,14 @@ class Image_For_Patch:
                                                                 self.patch_location[1] : self.patch_location[1]+self.patch_shape[1], 
                                                                 ...
                                                                 ]
-                                                                
-        #Calculate RGB perceptability of image
-        self.image_rgb_diff = get_rgb_diff(TRANSFORM(self.patch_section_of_image.astype(np.uint8)))
 
     def cal_custom_patch_shape_and_location(self, prediction_box):
         prediction_box_width_height = (prediction_box[1][0] - prediction_box[0][0], prediction_box[1][1] - prediction_box[0][1])
 
         prediction_box_centre_points = (int(prediction_box[1][0] - (prediction_box_width_height[0]/2)), 
                                         int(prediction_box[1][1] - (prediction_box_width_height[1]/2))) 
-
         #in the format (height, width, nb_channels) to meet Dpatch Requirements
-        patch_shape = (int(1/4 * prediction_box_width_height[1]), int(1/4 * prediction_box_width_height[0]), 3)
+        patch_shape = (int(1/3 * prediction_box_width_height[1]), int(1/3 * prediction_box_width_height[0]), 3)
         patch_location = self.cal_custom_patch_location(prediction_box_centre_points, patch_shape)
 
         return patch_shape, patch_location
@@ -60,4 +56,4 @@ class Image_For_Patch:
 
     def append_to_training_progress_file(self, string):
         path = f"{training_loss_printouts_directory}/loss_prinouts_for_{self.name}.txt"
-        file_handler(path = path, mode = "a", func= lambda f: f.write("\n" + string))
+        file_handler(path=path, mode="a", func=lambda f: f.write("\n" + string))
