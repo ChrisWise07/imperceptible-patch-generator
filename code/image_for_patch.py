@@ -38,6 +38,8 @@ class Image_For_Patch:
                                                                 ...
                                                                 ]
 
+        self.image_rgb_diff = get_lab_diff(TRANSFORM(self.patch_section_of_image.astype(np.uint8)))
+
     def cal_custom_patch_shape_and_location(self, prediction_box):
         prediction_box_width_height = (prediction_box[1][0] - prediction_box[0][0], prediction_box[1][1] - prediction_box[0][1])
 

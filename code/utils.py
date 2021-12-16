@@ -24,6 +24,14 @@ def save_image_from_np_array(path, np_array) -> None:
 def get_lab_diff(image_tensor: Tensor) -> Tensor:
         return rgb2lab_diff(torch.stack([image_tensor], dim=0), DEVICE) 
 
+def calculate_patch_perceptibility_gradients_no_trans(patch: np.ndarray, image_lab_diff: Tensor, loss_tracker) -> np.ndarray:
+        patch_tensor = TRANSFORM(patch.astype(np.uint8)).requires_grad_()
+        d_map = ciede2000_diff(image_lab_diff, get_lab_diff(patch_tensor), DEVICE).unsqueeze(1)
+        perceptibility_loss = torch.norm(d_map.view(1,-1),dim=1).sum()
+        loss_tracker.update_perceptibility_loss(perceptibility_loss.item())
+        perceptibility_loss.backward()
+        return (patch_tensor.grad/(torch.norm(patch_tensor.grad.view(1,-1), dim=1)+EPSILON)).permute(1,2,0).numpy()
+
 def calculate_patch_perceptibility_gradients(patched_image: np.ndarray, unpatched_image: np.ndarray, loss_tracker) -> np.ndarray:
         patched_image_tensor = TRANSFORM(patched_image[0].astype(np.uint8)).requires_grad_()
         unpatched_image_tensor = TRANSFORM(unpatched_image[0].astype(np.uint8))

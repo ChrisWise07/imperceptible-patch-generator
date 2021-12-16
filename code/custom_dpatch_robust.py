@@ -37,7 +37,7 @@ from art.attacks.attack import EvasionAttack
 from art.estimators.estimator import BaseEstimator, LossGradientsMixin
 from art.estimators.object_detection.object_detector import ObjectDetectorMixin
 from art import config
-from utils import calculate_patch_perceptibility_gradients, save_image_from_np_array
+from utils import calculate_patch_perceptibility_gradients, save_image_from_np_array, calculate_patch_perceptibility_gradients_no_trans
 from image_for_patch import Image_For_Patch
 from loss_tracker import Loss_Tracker
 from main import args
@@ -280,6 +280,7 @@ class RobustDPatch(EvasionAttack):
             self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
             self._patch += self._old_patch_detection_update
 
+            """
             #update based on perceptibility
             patched_image, patch_target, transforms, unpatched_image = self._augment_images_with_patch(
                 x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
@@ -294,6 +295,13 @@ class RobustDPatch(EvasionAttack):
             )
 
             current_patch_perceptibility_update = perc_patch_gradients[0] * -(cosine_perceptibility_learning_rate)
+            """
+            
+            perc_patch_gradients = calculate_patch_perceptibility_gradients_no_trans(
+                self._patch, self.image_to_patch.image_rgb_diff, self.loss_tracker
+            )
+
+            current_patch_perceptibility_update = perc_patch_gradients * -(cosine_perceptibility_learning_rate)
             self._patch += current_patch_perceptibility_update
             #self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
             #self._patch += self._old_patch_perceptibility_update
