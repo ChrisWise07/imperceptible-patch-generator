@@ -2,7 +2,7 @@ import os
 import torch
 
 from torchvision import transforms
-from custom_pytorch_faster_rcnn import PyTorchFasterRCNN
+from custom_pytorch_faster_rcnn import CustomPyTorchFasterRCNN
 
 COCO_INSTANCE_CATEGORY_NAMES = [
     "__background__",
@@ -100,7 +100,7 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 
 TRANSFORM = transforms.ToTensor()
 
-FRCNN = PyTorchFasterRCNN(clip_values=(0, 255), 
+FRCNN = CustomPyTorchFasterRCNN(clip_values=(0, 255), 
                           attack_losses=["loss_classifier", "loss_box_reg", "loss_objectness", "loss_rpn_box_reg"])
 
 if torch.cuda.is_available():

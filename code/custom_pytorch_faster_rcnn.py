@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class PyTorchFasterRCNN(CustomPyTorchObjectDetector):
+class CustomPyTorchFasterRCNN(CustomPyTorchObjectDetector):
     """
     This class implements a model-specific object detector using Faster-RCNN and PyTorch.
     """
