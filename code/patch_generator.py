@@ -75,8 +75,6 @@ def generate_rrap_for_image(image_name, file_type):
     image_adv_as_np_array = attack.apply_patch(x=image.image_as_np_array)
     save_image_from_np_array(f"{final_patched_images_directory}/adv_{image_name}.{file_type}", image_adv_as_np_array[0])
 
-    print("Patch Gen Adv Path")
-    print(f"{final_predictions_images_directory}/adv_{image_name}.{file_type}")
     predictions_class, predictions_boxes, predictions_score = plot_predictions(object_detector=FRCNN,
                                                                                image=image_adv_as_np_array, 
                                                                                path=f"{final_predictions_images_directory}/adv_{image_name}.{file_type}", 

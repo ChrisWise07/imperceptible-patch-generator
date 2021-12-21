@@ -128,8 +128,6 @@ def generate_predictions(object_detector, image: np.ndarray, threshold: float):
         return extract_predictions(predictions[0], threshold)
 
 def extract_predictions(predictions_, threshold):
-        print(threshold)
-
         # Get the predicted class
         predictions_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(predictions_["labels"])]
 
@@ -141,13 +139,10 @@ def extract_predictions(predictions_, threshold):
 
         # Get a list of index with score greater than threshold
         predictions_t = [predictions_score.index(x) for x in predictions_score if x >= threshold]
-        print(len(predictions_t))
 
         if len(predictions_t):
-                print("good predictions")
                 predictions_t = predictions_t[-1]
         else:
-                print("no predictions")
                 return [], [], []
 
         predictions_boxes = predictions_boxes[: predictions_t + 1]
