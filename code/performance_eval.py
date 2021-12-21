@@ -35,10 +35,11 @@ class mAP_calculator:
 		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
 
 	def map_confidence_to_tp_fp(self, ground_truth_bbox: List[tuple], adv_image_path: str):
+		print("per eval adv path")
+		print(adv_image_path)
 		predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
 																					   image=open_image_as_rgb_np_array(path=adv_image_path), 
 																					   threshold=self.confidence_threshold)
-
 		best_iou, best_iou_index = 0.5, 0
 
 		for pred_class, bbox, score in zip(predictions_class, predictions_boxes, predictions_score):
