@@ -2,6 +2,8 @@ import argparse
 import os
 import json
 
+import numpy as np
+
 from constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
 from utils import file_handler
 from performance_eval import mAP_calculator
@@ -60,24 +62,23 @@ mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_imag
 def main():
     from patch_generator import generate_rrap_for_image
 
-    total_losses = {"Average detection loss": 0.0, 
-                    "Average rolling detection loss": 0.0, 
-                    "Average PerC distance": 0.0, 
-                    "Average rolling PerC distance": 0.0}
-    file_name_type = os.listdir(IMAGES_DIRECTORY)
+    loss_names = ["Average detection loss", 
+                 "Average rolling detection loss", 
+                 "Average PerC distance", 
+                 "Average rolling PerC distance"]
+    loss_totals = np.zeros(4)
 
-    for name_type in file_name_type:
-        name, type = name_type.split(".")
+    file_name_type = [name.split(".") for name in os.listdir(IMAGES_DIRECTORY)]
 
-        for loss, loss_type in zip(generate_rrap_for_image(name, type), list(total_losses.keys())):
-            total_losses[loss_type] += loss
+    for name, type in file_name_type:
+        loss_totals = np.add(loss_totals, generate_rrap_for_image(name, type))
 
         adv_image_path = f"{final_patched_images_directory}/adv_{name}.{type}"
         [calculator.map_confidence_to_tp_fp(ground_truths[name], adv_image_path) for calculator in mAP_calculators]
 
     results_string = "--- Average detection losses & PerC distances ---"
-    for loss_type, loss_total in total_losses.items():
-        results_string += f"\n{loss_type}: {loss_total/num_of_examples}"       
+    for loss_name, loss_total in zip(loss_names, loss_totals):
+        results_string += f"\n{loss_name}: {loss_total/num_of_examples}"       
 
     results_string += "\n\n--- mAP Results ---"
     total_mAP = 0.0

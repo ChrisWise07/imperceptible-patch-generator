@@ -1,10 +1,12 @@
 import numpy as np
 
 from math import floor, sqrt
+
+from torch._C import device
 from custom_dpatch_robust import RobustDPatch
 from utils import get_previous_steps, get_previous_training_data, record_attack_training_data, save_image_from_np_array, plot_predictions 
 from image_for_patch import Image_For_Patch
-from constants import FRCNN
+from constants import DEVICE, FRCNN
 from data_plotter import Data_Plotter
 from main import training_data_directory, final_patches_directory, final_patched_images_directory, final_predictions_images_directory, args 
 
@@ -83,4 +85,4 @@ def generate_rrap_for_image(image_name, file_type):
                                            f"\npredicted classes: {str(predictions_class)}" +
                                            f"\npredicted score: {str(predictions_score)}")
 
-    return attack.get_loss_tracker().return_all_losses()
+    return np.array(attack.get_loss_tracker().return_all_losses())
