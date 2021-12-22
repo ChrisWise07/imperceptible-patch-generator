@@ -55,7 +55,7 @@ ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r
 num_of_examples = len(ground_truths)
 
 confidence_thresholds = [0.001, 0.1, 0.5]
-mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=len(ground_truths)) for threshold in confidence_thresholds]
+mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=num_of_examples) for threshold in confidence_thresholds]
 
 def main():
     from patch_generator import generate_rrap_for_image
@@ -90,4 +90,7 @@ def main():
                  func=lambda f: f.write(results_string))
 
 if __name__ == "__main__":
+    from timeit import default_timer as timer
+    start = timer()
     main()
+    print(timer() - start)
