@@ -1,7 +1,6 @@
 import argparse
 import os
 import json
-
 import numpy as np
 
 from constants import ROOT_EXPERIMENT_DATA_DIRECTORY, ROOT_DIRECTORY, IMAGES_DIRECTORY
