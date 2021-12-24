@@ -280,31 +280,15 @@ class RobustDPatch(EvasionAttack):
             self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
             self._patch += self._old_patch_detection_update
 
-            """
             #update based on perceptibility
-            patched_image, patch_target, transforms, unpatched_image = self._augment_images_with_patch(
-                x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
-            )
-
-            perc_patch_gradients = calculate_patch_perceptibility_gradients(
-                patched_image, unpatched_image, self.loss_tracker
-            )
-
-            perc_patch_gradients = self._untransform_gradients(
-                np.stack([perc_patch_gradients], axis=0), transforms, channels_first=self.estimator.channels_first
-            )
-
-            current_patch_perceptibility_update = perc_patch_gradients[0] * -(cosine_perceptibility_learning_rate)
-            """
-            
             perc_patch_gradients = calculate_patch_perceptibility_gradients_no_trans(
                 self._patch, self.image_to_patch.image_rgb_diff, self.loss_tracker
             )
 
             current_patch_perceptibility_update = perc_patch_gradients * -(cosine_perceptibility_learning_rate)
-            self._patch += current_patch_perceptibility_update
-            #self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
-            #self._patch += self._old_patch_perceptibility_update
+            #self._patch += current_patch_perceptibility_update
+            self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
+            self._patch += self._old_patch_perceptibility_update
 
             if self.estimator.clip_values is not None:
                 self._patch = np.clip(self._patch, a_min=self.estimator.clip_values[0], a_max=self.estimator.clip_values[1])
