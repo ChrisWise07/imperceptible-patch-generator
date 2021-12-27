@@ -20,6 +20,7 @@ parser.add_argument('--data_folder_name', type=str, default=None, help='Name of 
 parser.add_argument('--previous_experiment_directory_name', type=str, default=None, help='Name of previous experiment directory; this is used to access previous training data (default = None)')
 parser.add_argument('--patch_config', type=str, default='is', help='Starting patch configuration [random (r), image segment (is), black (b)] (default = is)')
 parser.add_argument('--loss_print_freq', type=int, default=1000, help='Frequency, based on iteration number, to print losses (default = 1000)')
+parser.add_argument('--dec_update_freq', type=int, default=1, help='Frequency, based on iteration number, to perform detection updates (default = 1)')
 
 args = parser.parse_args()
 
