@@ -278,7 +278,6 @@ class RobustDPatch(EvasionAttack):
 
                 #update patch based on detection
                 current_patch_detection_update = np.sign(patch_gradients_old) * (1 - 2 * int(self.targeted)) * self.detection_learning_rate
-                #self._patch += current_patch_detection_update
                 self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
                 self._patch += self._old_patch_detection_update
 
@@ -288,7 +287,6 @@ class RobustDPatch(EvasionAttack):
             )
 
             current_patch_perceptibility_update = perc_patch_gradients * -(cosine_perceptibility_learning_rate)
-            #self._patch += current_patch_perceptibility_update
             self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
             self._patch += self._old_patch_perceptibility_update
 
