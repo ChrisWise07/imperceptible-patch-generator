@@ -57,15 +57,15 @@ def generate_rrap_for_image(image_name, file_type):
                           max_iter=args.max_iter, 
                           batch_size=1, 
                           verbose=False, 
-                          rotation_weights=(1, 1, 0, 1), 
-                          brightness_range=(0.4, 1.6), 
+                          #rotation_weights=(1, 1, 0, 1), 
+                          #brightness_range=(0.4, 1.6), 
                           decay_rate=args.decay_rate, 
                           detection_momentum=args.decep_mom, 
                           perceptibility_momentum=args.percep_mom, 
                           image_to_patch=image, 
                           training_data_path=training_data_path, 
                           perceptibility_learning_rate=args.percep_lr, 
-                          crop_range=(crop_height, crop_width),
+                          #crop_range=(crop_height, crop_width),
                           detection_learning_rate=args.decep_lr, 
                           previous_training_data=previous_training_data)
 
