@@ -584,7 +584,8 @@ class RobustDPatch(EvasionAttack):
     def configure_starting_patch(self, config_flag: str) -> np.ndarray:
         return {
             'is': self.image_to_patch.patch_section_of_image,
-            'b': np.full(shape=self.patch_shape, fill_value = 255, dtype=config.ART_NUMPY_DTYPE),
+            'b': np.full(shape=self.patch_shape, fill_value = 0, dtype=config.ART_NUMPY_DTYPE),
+            'w': np.full(shape=self.patch_shape, fill_value = 255, dtype=config.ART_NUMPY_DTYPE),
             'r': self.random_patch(),
             'hybrid': self.image_to_patch.patch_section_of_image + self.random_patch()
         }[config_flag]

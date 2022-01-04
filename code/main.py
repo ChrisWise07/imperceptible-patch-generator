@@ -91,7 +91,4 @@ def main():
                  func=lambda f: f.write(results_string))
 
 if __name__ == "__main__":
-    from timeit import default_timer as timer
-    start = timer()
     main()
-    print(timer() - start)
