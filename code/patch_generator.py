@@ -35,7 +35,7 @@ def generate_adversarial_patch(attack, image):
 
         if ((step + 1) % args.decay_freq == 0):
             attack.decay_detection_learning_rate()
-            #attack.decay_perceptibility_learning_rate()
+            attack.decay_perceptibility_learning_rate()
 
     data_plotter.plot_training_data(image_name)
 
