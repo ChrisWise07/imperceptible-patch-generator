@@ -88,7 +88,8 @@ class RobustDPatch(EvasionAttack):
         batch_size: int = 16,
         targeted: bool = False,
         verbose: bool = True,
-        decay_rate: float = 0.95,
+        dec_decay_rate: float = 0.95,
+        percep_decay_rate: float = 0.95,
         detection_momentum = 0.9, 
         perceptibility_momentum = 0.9,
         perceptibility_learning_rate: float = 5.0,
@@ -129,7 +130,8 @@ class RobustDPatch(EvasionAttack):
         self.batch_size = batch_size
         self._targeted = targeted
         self.verbose = verbose
-        self.decay_rate = decay_rate
+        self.dec_decay_rate = dec_decay_rate
+        self.percep_decay_rate = percep_decay_rate
         self.detection_momentum =  detection_momentum 
         self.perceptibility_momentum = perceptibility_momentum
         self.training_data_path = training_data_path
@@ -539,13 +541,13 @@ class RobustDPatch(EvasionAttack):
         return self.patch_shape
 
     def decay_detection_learning_rate(self):
-        self.detection_learning_rate *= self.decay_rate
+        self.detection_learning_rate *= self.dec_decay_rate
     
     def get_detection_learning_rate(self):
         return self.detection_learning_rate
  
     def decay_perceptibility_learning_rate(self):
-        self.perceptibility_learning_rate *= self.decay_rate
+        self.perceptibility_learning_rate *= self.percep_decay_rate
     
     def get_perceptibility_learning_rate(self):
         return self.perceptibility_learning_rate
