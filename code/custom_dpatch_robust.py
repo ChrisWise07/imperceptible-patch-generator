@@ -260,7 +260,7 @@ class RobustDPatch(EvasionAttack):
                         y_batch = y[i_batch_start:i_batch_end]
 
                     # Sample and apply the random transformations:
-                    patched_images, patch_target, transforms = self._augment_images_with_patch(
+                    patched_images, patch_target, transforms, copy = self._augment_images_with_patch(
                         x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
                     )
 
@@ -298,7 +298,7 @@ class RobustDPatch(EvasionAttack):
 
             current_patch_perceptibility_update = perc_patch_gradients[0] * -(cosine_perceptibility_learning_rate)
             self._patch += current_patch_perceptibility_update
-            
+
             #self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
             #self._patch += self._old_patch_perceptibility_update
 
@@ -433,7 +433,7 @@ class RobustDPatch(EvasionAttack):
         if channels_first:
             x_patch = np.transpose(x_patch, (0, 3, 1, 2))
 
-        return x_patch, patch_target, transformations
+        return x_patch, patch_target, transformations, x_copy
 
     def _untransform_gradients(
         self,
