@@ -1,6 +1,6 @@
 import torch
 
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from dataclasses import dataclass
 from torch.functional import Tensor
 from utils import generate_predictions, open_image_as_rgb_np_array
@@ -27,10 +27,10 @@ class mAP_calculator:
 	mAP: float = 0.0
 
 	def single_image_map_confidence_to_tp_fp(
-			self, ground_truth_bbox, adv_image_path: str, 
+			self, ground_truth_bbox: List[float], adv_image_path: str, 
 			unsorted_confidence_values: Tensor, unsorted_tp: Tensor, 
 			unsorted_fp: Tensor) -> None:
-
+			
 		predictions_class, predictions_boxes, predictions_score = generate_predictions(
 			object_detector=FRCNN, 
 			image=open_image_as_rgb_np_array(path=adv_image_path), 
@@ -91,7 +91,7 @@ class mAP_calculator:
 		
 		self.mAP = torch.trapz(precisions, recalls).item()
 
-	def calculate_mAP(self, ground_truths, file_name_type) -> None:
+	def calculate_mAP(self, ground_truths: Dict[str, List[float]], file_name_type: List[List[str]]) -> None:
 		from main import final_patched_images_directory
 			
 		unsorted_confidence_values = torch.zeros(

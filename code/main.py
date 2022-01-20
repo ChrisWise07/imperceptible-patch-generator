@@ -72,11 +72,8 @@ def main():
 
     results_string = "--- Average detection losses & PerC distances ---"
     for loss_name, loss_total in zip(loss_names, loss_totals):
-        results_string += f"\n{loss_name}: {loss_total/len(file_name_type)}"       
-
-    print(type(file_name_type))
-    print(type(ground_truths))
-    
+        results_string += f"\n{loss_name}: {loss_total/len(file_name_type)}" 
+        
     [calculator.calculate_mAP(ground_truths, file_name_type) for calculator in mAP_calculators]
 
     results_string += "\n\n--- mAP Results ---"
