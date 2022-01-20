@@ -1,7 +1,7 @@
 import torch
 
-from typing import List
-from dataclasses import dataclass, field
+from typing import List, Tuple
+from dataclasses import dataclass
 from torch.functional import Tensor
 from utils import generate_predictions, open_image_as_rgb_np_array
 from constants import FRCNN, EPSILON, LIMIT_OF_PREDICTIONS_PER_IMAGE, DEVICE
@@ -25,61 +25,95 @@ class mAP_calculator:
 	number_of_images: int
 	counter: int = 0
 	mAP: float = 0.0
-	unsorted_confidence_values: Tensor = field(init=False)
-	unsorted_tp: Tensor = field(init=False)
-	unsorted_fp: Tensor = field(init=False)
 
-	def __post_init__(self):
-		self.unsorted_confidence_values = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.float, device=DEVICE)
-		self.unsorted_tp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
-		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
+	def single_image_map_confidence_to_tp_fp(
+			self, ground_truth_bbox, adv_image_path: str, 
+			unsorted_confidence_values: Tensor, unsorted_tp: Tensor, 
+			unsorted_fp: Tensor) -> None:
 
-	def single_image_map_confidence_to_tp_fp(self, ground_truth_bbox, adv_image_path: str):
-		predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
-																					   image=open_image_as_rgb_np_array(path=adv_image_path), 
-																					   threshold=self.confidence_threshold)
+		predictions_class, predictions_boxes, predictions_score = generate_predictions(
+			object_detector=FRCNN, 
+			image=open_image_as_rgb_np_array(path=adv_image_path), 
+			threshold=self.confidence_threshold
+		)
+
 		best_iou, best_iou_index = 0.5, 0
 
-		for pred_class, bbox, score in zip(predictions_class, predictions_boxes, predictions_score):
-			self.unsorted_confidence_values[self.counter] = float(score)
+		for pred_class, bbox, score in zip(
+			predictions_class, 
+			predictions_boxes, 
+			predictions_score
+		):
+			unsorted_confidence_values[self.counter] = float(score)
 			if (pred_class == "airplane"):
-				iou = bb_intersection_over_union([bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]], ground_truth_bbox)
+				iou = bb_intersection_over_union(
+					[bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]], 
+					ground_truth_bbox
+				)
 				if (iou > best_iou):
 					best_iou = iou
 					best_iou_index = self.counter
 				else:
-					self.unsorted_fp[self.counter] = 1
+					unsorted_fp[self.counter] = 1
 			else:
-				self.unsorted_fp[self.counter] = 1
+				unsorted_fp[self.counter] = 1
 
 			self.counter += 1
 
-		self.unsorted_tp[best_iou_index] = 1
+		unsorted_tp[best_iou_index] = 1
 	
-	def sort_tp_fp_by_confidence(self):
-		sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
+	def sort_tp_fp_by_confidence(
+			self, unsorted_confidence_values: Tensor, 
+			unsorted_tp: Tensor, unsorted_fp: Tensor) -> Tuple[Tensor, Tensor]:
 
-		self.unsorted_tp = self.unsorted_tp[:self.counter]
-		self.unsorted_fp = self.unsorted_fp[:self.counter]
-		self.sorted_tp = torch.tensor([self.unsorted_tp[i] for i in indices], dtype=torch.short, device=DEVICE)
-		self.sorted_fp = torch.tensor([self.unsorted_fp[i] for i in indices], dtype=torch.short, device=DEVICE)
+		sorted_confidence_values, indices = torch.sort(
+			unsorted_confidence_values[:self.counter], descending=True
+		)
 
-	def calculate_area_under_curve(self) -> float:
-		tp_cum_sum = torch.cumsum(self.sorted_tp, dim=0, dtype=torch.short)
-		fp_cum_sum = torch.cumsum(self.sorted_fp, dim=0, dtype=torch.short)
+		unsorted_tp = unsorted_tp[:self.counter]
+		unsorted_fp = unsorted_fp[:self.counter]
+		sorted_tp = torch.tensor(
+			[unsorted_tp[i] for i in indices], dtype=torch.short, device=DEVICE
+		)
+		sorted_fp = torch.tensor(
+			[unsorted_fp[i] for i in indices], dtype=torch.short, device=DEVICE
+		)
+
+		return sorted_tp, sorted_fp
+
+	def calculate_area_under_curve(self, sorted_tp: Tensor, sorted_fp: Tensor) -> None:
+		tp_cum_sum = torch.cumsum(sorted_tp, dim=0, dtype=torch.short)
+		fp_cum_sum = torch.cumsum(sorted_fp, dim=0, dtype=torch.short)
 		precisions = torch.divide(tp_cum_sum, (tp_cum_sum + fp_cum_sum + EPSILON))
 		precisions = torch.cat((torch.tensor([1], dtype=torch.float, device=DEVICE), precisions))
 		recalls = torch.divide(tp_cum_sum, (self.number_of_images + EPSILON))
 		recalls = torch.cat((torch.tensor([0], dtype=torch.float, device=DEVICE), recalls))
 		
 		self.mAP = torch.trapz(precisions, recalls).item()
-		return self.mAP 
 
-	def calculate_mAP(self, ground_truths, file_name_type):
+	def calculate_mAP(self, ground_truths, file_name_type) -> None:
 		from main import final_patched_images_directory
+			
+		unsorted_confidence_values = torch.zeros(
+			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
+			dtype=torch.float, device=DEVICE
+		)
+		unsorted_tp = torch.zeros(
+			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
+			dtype=torch.short, device=DEVICE
+		)
+		unsorted_fp = torch.zeros(
+			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
+			dtype=torch.short, device=DEVICE
+		)
 
 		for name, type in file_name_type:
-			self.single_image_map_confidence_to_tp_fp(ground_truths[name], f"{final_patched_images_directory}/adv_{name}.{type}")
+			self.single_image_map_confidence_to_tp_fp(
+				ground_truths[name], f"{final_patched_images_directory}/adv_{name}.{type}", 
+				unsorted_confidence_values, unsorted_tp, unsorted_fp
+			)
 
-		self.sort_tp_fp_by_confidence()
-		self.calculate_area_under_curve()
+		sorted_tp, sorted_fp = self.sort_tp_fp_by_confidence(
+			unsorted_confidence_values, unsorted_tp, unsorted_fp
+		)
+		self.calculate_area_under_curve(sorted_tp, sorted_fp)

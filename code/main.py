@@ -57,23 +57,26 @@ ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r
 file_name_type = [name.split(".") for name in os.listdir(IMAGES_DIRECTORY)]
 mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=len(file_name_type)) for threshold in [0.001, 0.1, 0.5]]
 loss_names = [
-                "Average detection loss", 
-                "Average rolling detection loss", 
-                "Average PerC distance", 
-                "Average rolling PerC distance"
-                ]
+    "Average detection loss", 
+    "Average rolling detection loss", 
+    "Average PerC distance", 
+    "Average rolling PerC distance"
+]
 
 def main():
     from patch_generator import generate_rrap_for_image
     loss_totals = np.zeros(4)
 
-    for name, type in file_name_type:
-        loss_totals = np.add(loss_totals, generate_rrap_for_image(name, type))
+    for name, file_type in file_name_type:
+        loss_totals = np.add(loss_totals, generate_rrap_for_image(name, file_type))
 
     results_string = "--- Average detection losses & PerC distances ---"
     for loss_name, loss_total in zip(loss_names, loss_totals):
         results_string += f"\n{loss_name}: {loss_total/len(file_name_type)}"       
 
+    print(type(file_name_type))
+    print(type(ground_truths))
+    
     [calculator.calculate_mAP(ground_truths, file_name_type) for calculator in mAP_calculators]
 
     results_string += "\n\n--- mAP Results ---"
