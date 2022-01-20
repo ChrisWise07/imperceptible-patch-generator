@@ -54,37 +54,32 @@ file_handler(path = f"{current_experiment_data_directory}/hyperparameters.txt", 
 
 ground_truths = file_handler(path=f"{ROOT_DIRECTORY}/ground_truths.txt", mode="r", 
                              func=lambda f: json.load(f))
-
-num_of_examples = len(ground_truths)
-
-confidence_thresholds = [0.001, 0.1, 0.5]
-mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=num_of_examples) for threshold in confidence_thresholds]
+file_name_type = [name.split(".") for name in os.listdir(IMAGES_DIRECTORY)]
+mAP_calculators = [mAP_calculator(confidence_threshold=threshold, number_of_images=len(file_name_type)) for threshold in [0.001, 0.1, 0.5]]
+loss_names = [
+                "Average detection loss", 
+                "Average rolling detection loss", 
+                "Average PerC distance", 
+                "Average rolling PerC distance"
+                ]
 
 def main():
     from patch_generator import generate_rrap_for_image
-
-    loss_names = ["Average detection loss", 
-                 "Average rolling detection loss", 
-                 "Average PerC distance", 
-                 "Average rolling PerC distance"]
     loss_totals = np.zeros(4)
-
-    file_name_type = [name.split(".") for name in os.listdir(IMAGES_DIRECTORY)]
 
     for name, type in file_name_type:
         loss_totals = np.add(loss_totals, generate_rrap_for_image(name, type))
 
-        adv_image_path = f"{final_patched_images_directory}/adv_{name}.{type}"
-        [calculator.map_confidence_to_tp_fp(ground_truths[name], adv_image_path) for calculator in mAP_calculators]
-
     results_string = "--- Average detection losses & PerC distances ---"
     for loss_name, loss_total in zip(loss_names, loss_totals):
-        results_string += f"\n{loss_name}: {loss_total/num_of_examples}"       
+        results_string += f"\n{loss_name}: {loss_total/len(file_name_type)}"       
+
+    [calculator.calculate_mAP(ground_truths, file_name_type) for calculator in mAP_calculators]
 
     results_string += "\n\n--- mAP Results ---"
     total_mAP = 0.0
     for calculator in mAP_calculators:
-        results_string += f"\nThe mAP for confidence threshold {calculator.confidence_threshold} = {calculator.calculate_mAP()}"
+        results_string += f"\nThe mAP for confidence threshold {calculator.confidence_threshold} = {calculator.mAP}"
         total_mAP += calculator.mAP
     results_string += f"\nThe mAP averaged across all confidence thresholds = {total_mAP/len(mAP_calculators)}"
 

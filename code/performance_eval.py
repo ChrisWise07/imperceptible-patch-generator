@@ -34,7 +34,7 @@ class mAP_calculator:
 		self.unsorted_tp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
 		self.unsorted_fp = torch.zeros(self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, dtype=torch.short, device=DEVICE)
 
-	def map_confidence_to_tp_fp(self, ground_truth_bbox: List[tuple], adv_image_path: str):
+	def single_image_map_confidence_to_tp_fp(self, ground_truth_bbox, adv_image_path: str):
 		predictions_class, predictions_boxes, predictions_score = generate_predictions(object_detector=FRCNN, 
 																					   image=open_image_as_rgb_np_array(path=adv_image_path), 
 																					   threshold=self.confidence_threshold)
@@ -55,16 +55,18 @@ class mAP_calculator:
 			self.counter += 1
 
 		self.unsorted_tp[best_iou_index] = 1
-
-	def calculate_mAP(self) -> float:
+	
+	def sort_tp_fp_by_confidence(self):
 		sorted_confidence_values, indices = torch.sort(self.unsorted_confidence_values[:self.counter], descending=True)
 
 		self.unsorted_tp = self.unsorted_tp[:self.counter]
 		self.unsorted_fp = self.unsorted_fp[:self.counter]
-		sorted_tp = torch.tensor([self.unsorted_tp[i] for i in indices], dtype=torch.short, device=DEVICE)
-		sorted_fp = torch.tensor([self.unsorted_fp[i] for i in indices], dtype=torch.short, device=DEVICE)
-		tp_cum_sum = torch.cumsum(sorted_tp, dim=0, dtype=torch.short)
-		fp_cum_sum = torch.cumsum(sorted_fp, dim=0, dtype=torch.short)
+		self.sorted_tp = torch.tensor([self.unsorted_tp[i] for i in indices], dtype=torch.short, device=DEVICE)
+		self.sorted_fp = torch.tensor([self.unsorted_fp[i] for i in indices], dtype=torch.short, device=DEVICE)
+
+	def calculate_area_under_curve(self) -> float:
+		tp_cum_sum = torch.cumsum(self.sorted_tp, dim=0, dtype=torch.short)
+		fp_cum_sum = torch.cumsum(self.sorted_fp, dim=0, dtype=torch.short)
 		precisions = torch.divide(tp_cum_sum, (tp_cum_sum + fp_cum_sum + EPSILON))
 		precisions = torch.cat((torch.tensor([1], dtype=torch.float, device=DEVICE), precisions))
 		recalls = torch.divide(tp_cum_sum, (self.number_of_images + EPSILON))
@@ -72,3 +74,12 @@ class mAP_calculator:
 		
 		self.mAP = torch.trapz(precisions, recalls).item()
 		return self.mAP 
+
+	def calculate_mAP(self, ground_truths, file_name_type):
+		from main import final_patched_images_directory
+
+		for name, type in file_name_type:
+			self.single_image_map_confidence_to_tp_fp(ground_truths[name], f"{final_patched_images_directory}/adv_{name}.{type}")
+
+		self.sort_tp_fp_by_confidence()
+		self.calculate_area_under_curve()
