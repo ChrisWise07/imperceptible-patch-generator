@@ -245,7 +245,10 @@ class RobustDPatch(EvasionAttack):
         min_perceptibility_learning_rate = self.perceptibility_learning_rate / 10
     
         for i_step in trange(self.max_iter, desc="RobustDPatch iteration", disable=not self.verbose):
-            cosine_perceptibility_learning_rate = min_perceptibility_learning_rate + (0.5 * (self.perceptibility_learning_rate - min_perceptibility_learning_rate)) * (1 + cos((i_step / self.max_iter) * pi))
+            cosine_perceptibility_learning_rate = (min_perceptibility_learning_rate 
+                                                   + (0.5 * (self.perceptibility_learning_rate - min_perceptibility_learning_rate)) 
+                                                   * (1 + cos((i_step / self.max_iter) * pi)))
+
             
             if (i_step % args.dec_update_freq == 0):
                 patch_gradients_old = np.zeros_like(self._patch)
@@ -261,7 +264,8 @@ class RobustDPatch(EvasionAttack):
 
                     # Sample and apply the random transformations:
                     patched_images, patch_target, transforms = self._augment_images_with_patch(
-                        x[i_batch_start:i_batch_end], y_batch, self._patch, channels_first=self.estimator.channels_first
+                        x[i_batch_start:i_batch_end], y_batch, self._patch, 
+                        channels_first=self.estimator.channels_first
                     )
 
                     gradients, loss = self.estimator.loss_gradient(
@@ -279,21 +283,37 @@ class RobustDPatch(EvasionAttack):
                     patch_gradients_old += np.sum(gradients, axis=0)
 
                 #update patch based on detection
-                current_patch_detection_update = np.sign(patch_gradients_old) * (1 - 2 * int(self.targeted)) * self.detection_learning_rate
-                self._old_patch_detection_update = np.add((self.detection_momentum * self._old_patch_detection_update), ((1 - self.detection_momentum) * current_patch_detection_update))
+                current_patch_detection_update = (np.sign(patch_gradients_old) 
+                                                  * (1 - 2 * int(self.targeted)) 
+                                                  * self.detection_learning_rate)
+
+                self._old_patch_detection_update = np.add(
+                    (self.detection_momentum * self._old_patch_detection_update), 
+                    ((1 - self.detection_momentum) * current_patch_detection_update)
+                )
+
                 self._patch += self._old_patch_detection_update
 
             #update based on perceptibility
-            perc_patch_gradients = calculate_patch_perceptibility_gradients(self._patch, 
-                                                                            self.image_to_patch.image_rgb_diff, 
-                                                                            self.loss_tracker)
+            perc_patch_gradients = calculate_patch_perceptibility_gradients(
+                self._patch, self.image_to_patch.image_rgb_diff, self.loss_tracker
+            )
 
-            current_patch_perceptibility_update = perc_patch_gradients * -(cosine_perceptibility_learning_rate)
-            self._old_patch_perceptibility_update = np.add((self.perceptibility_momentum * self._old_patch_perceptibility_update), ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update))
+            current_patch_perceptibility_update = (perc_patch_gradients 
+                                                   * -(cosine_perceptibility_learning_rate))
+
+            self._old_patch_perceptibility_update = np.add(
+                (self.perceptibility_momentum * self._old_patch_perceptibility_update), 
+                ((1 - self.perceptibility_momentum) * current_patch_perceptibility_update)
+            )
+            
             self._patch += self._old_patch_perceptibility_update
 
             if self.estimator.clip_values is not None:
-                self._patch = np.clip(self._patch, a_min=self.estimator.clip_values[0], a_max=self.estimator.clip_values[1])
+                self._patch = np.clip(
+                    self._patch, a_min=self.estimator.clip_values[0], 
+                    a_max=self.estimator.clip_values[1]
+                )
 
             if (i_step + 1) % print_nth_num == 0:
                 self.loss_tracker.print_losses(self.image_to_patch, num_iter=i_step+1)

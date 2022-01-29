@@ -22,7 +22,12 @@ class Data_Plotter:
         self.detection_lr_history.append(detection_lr)
 
     def plot_training_data(self, image_name):
-        plot_data(self.rolling_detection_loss_history, self.current_detection_loss_history, 
-                  self.detection_lr_history, image_name, 'Detection')
-        plot_data(self.rolling_perceptibility_loss_history, self.current_perceptibility_loss_history, 
-                  self.perceptibility_lr_history, image_name, 'Perceptibility')
+        plot_data(
+            self.rolling_detection_loss_history, self.current_detection_loss_history, 
+            self.detection_lr_history, image_name, 'Detection'
+        )
+
+        plot_data(
+            self.rolling_perceptibility_loss_history, self.current_perceptibility_loss_history, 
+            self.perceptibility_lr_history, image_name, 'Perceptibility'
+        )

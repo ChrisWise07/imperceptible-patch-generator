@@ -100,8 +100,15 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 
 TRANSFORM = transforms.ToTensor()
 
-FRCNN = CustomPyTorchFasterRCNN(clip_values=(0, 255), 
-                          attack_losses=["loss_classifier", "loss_box_reg", "loss_objectness", "loss_rpn_box_reg"])
+FRCNN = CustomPyTorchFasterRCNN(
+        clip_values=(0, 255), 
+        attack_losses=[
+                "loss_classifier", 
+                "loss_box_reg", 
+                "loss_objectness", 
+                "loss_rpn_box_reg"
+        ]
+)
 
 if torch.cuda.is_available():
         DEVICE = torch.device(f"cuda:{torch.cuda.current_device()}")
