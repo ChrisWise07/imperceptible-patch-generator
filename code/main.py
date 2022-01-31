@@ -105,7 +105,9 @@ ground_truths = file_handler(
 file_name_type = [name.split(".") for name in os.listdir(IMAGES_DIRECTORY)]
 
 mAP_calculators = [
-    mAP_calculator(confidence_threshold=threshold, number_of_images=len(file_name_type)) for threshold in [0.001, 0.1, 0.5]
+    mAP_calculator(
+        confidence_threshold=threshold, number_of_images=len(file_name_type)
+    ) for threshold in [0.001, 0.1, 0.5]
 ]
 
 loss_names = [

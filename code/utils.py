@@ -65,8 +65,10 @@ def record_attack_training_data(attack, step_number):
         training_data["detection_learning_rate"] = attack.get_detection_learning_rate()
         training_data["perceptibility_learning_rate"] = attack.get_perceptibility_learning_rate()
         loss_tracker = attack.get_loss_tracker()
-        training_data["loss_data"] = {"perceptibility_loss": loss_tracker.rolling_perceptibility_loss, 
-                                      "detection_loss": loss_tracker.rolling_detection_loss}
+        training_data["loss_data"] = {
+                "perceptibility_loss": loss_tracker.rolling_perceptibility_loss, 
+                "detection_loss": loss_tracker.rolling_detection_loss
+                }
         training_data["patch_np_array"] = attack.get_patch()
         training_data["old_patch_detection_update"] = attack.get_old_patch_detection_update()
         training_data["old_patch_perceptibility_update"] = attack.get_old_patch_perceptibility_update()

@@ -106,10 +106,12 @@ class mAP_calculator:
 			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
 			dtype=torch.float, device=DEVICE
 		)
+
 		unsorted_tp = torch.zeros(
 			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
 			dtype=torch.short, device=DEVICE
 		)
+		
 		unsorted_fp = torch.zeros(
 			self.number_of_images * LIMIT_OF_PREDICTIONS_PER_IMAGE, 
 			dtype=torch.short, device=DEVICE
