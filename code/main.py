@@ -68,12 +68,6 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-def create_experiment_data_directory(path: str):
-    try:
-        os.mkdir(path)
-    except FileExistsError:
-        pass
-
 current_experiment_data_directory = f"{ROOT_EXPERIMENT_DATA_DIRECTORY}/{args.data_folder_name}"
 initial_predictions_images_directory = f"{current_experiment_data_directory}/initial_predictions"
 final_patches_directory = f"{current_experiment_data_directory}/patches_adv"
@@ -83,14 +77,14 @@ training_data_directory = f"{current_experiment_data_directory}/training_data"
 training_loss_printouts_directory = f"{current_experiment_data_directory}/training_loss_printouts"
 loss_plots_directory = f"{current_experiment_data_directory}/loss_plots_directory"
 
-create_experiment_data_directory(current_experiment_data_directory)
-create_experiment_data_directory(initial_predictions_images_directory)
-create_experiment_data_directory(final_patches_directory)
-create_experiment_data_directory(final_predictions_images_directory)
-create_experiment_data_directory(final_patched_images_directory)
-create_experiment_data_directory(training_data_directory)
-create_experiment_data_directory(training_loss_printouts_directory)
-create_experiment_data_directory(loss_plots_directory)
+os.mkdir(current_experiment_data_directory)
+os.mkdir(initial_predictions_images_directory)
+os.mkdir(final_patches_directory)
+os.mkdir(final_predictions_images_directory)
+os.mkdir(final_patched_images_directory)
+os.mkdir(training_data_directory)
+os.mkdir(training_loss_printouts_directory)
+os.mkdir(loss_plots_directory)
 
 file_handler(
     path = f"{current_experiment_data_directory}/hyperparameters.txt", mode = "w", 
