@@ -5,14 +5,20 @@ link here
 ### How to use:
 #### Install required files:
 ```bash
-copy block - sudo install ./requirements.txt
+sudo install ./requirements.txt
 ```
 #### move to root project folder: 
+```bash
 mv ./github/imperceptible_patch_generator
+```
 #### run:
+```bash
 ./execute_imperceptible_patch
+```
 #### results:
+```bash
 mv ./code/experiment_data
+```
 ####
 ### Credit
 The code has adapted two libraries:
