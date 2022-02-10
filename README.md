@@ -7,15 +7,15 @@ link here
 ```bash
 sudo install ./requirements.txt
 ```
-#### move to root project folder: 
+#### Move to root project folder: 
 ```bash
 mv ./github/imperceptible_patch_generator
 ```
-#### run:
+#### Run:
 ```bash
 ./execute_imperceptible_patch
 ```
-#### results:
+#### Results:
 ```bash
 mv ./code/experiment_data
 ```
