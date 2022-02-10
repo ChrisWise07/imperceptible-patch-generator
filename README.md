@@ -1,7 +1,5 @@
 # Developing Imperceptible Adversarial Patches to Camouflage Military Assets From Computer Vision Enabled Technologies
 ![Alt text](./compare_image_grid.png)
-### Link to paper: 
-link here
 ####
 ### How to use:
 #### Install required files:
