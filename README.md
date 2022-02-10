@@ -5,7 +5,7 @@ link here
 ### How to use:
 #### Install required files:
 ```bash
-sudo install ./requirements.txt
+sudo pip install -r requirements.txt
 ```
 #### Move to root project folder: 
 ```bash
