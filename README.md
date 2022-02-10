@@ -4,9 +4,9 @@ link here
 ####
 ### How to use:
 #### Install required files:
-'''bash
+```bash
 copy block - sudo install ./requirements.txt
-'''
+```
 #### move to root project folder: 
 mv ./github/imperceptible_patch_generator
 #### run:
