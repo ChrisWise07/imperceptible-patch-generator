@@ -1,0 +1,563 @@
+
+
+--- Initial Predictions for flying_jet_with_clouds ---
+predicted classes: ['airplane', 'person', 'airplane', 'airplane', 'person']
+predicted score: [0.9991025, 0.9275521, 0.90525264, 0.6929243, 0.6673762]
+
+
+--- Generating adversarial patch for flying_jet_with_clouds ---
+
+
+--- Step Number: 0 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.128426 
+Exponential rolling average detection loss: 1.154475 
+
+Current perceptibility loss: 6042.426758 
+Exponential rolling average perceptibility loss: 6051.128939 
+
+
+
+--- Step Number: 1 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.782353 
+Exponential rolling average detection loss: 1.335329 
+
+Current perceptibility loss: 5929.280762 
+Exponential rolling average perceptibility loss: 5935.384307 
+
+
+
+--- Step Number: 2 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.827756 
+Exponential rolling average detection loss: 1.481318 
+
+Current perceptibility loss: 5821.700684 
+Exponential rolling average perceptibility loss: 5828.685515 
+
+
+
+--- Step Number: 3 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.980441 
+Exponential rolling average detection loss: 1.563031 
+
+Current perceptibility loss: 5721.010254 
+Exponential rolling average perceptibility loss: 5726.199021 
+
+
+
+--- Step Number: 4 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.488957 
+Exponential rolling average detection loss: 1.662629 
+
+Current perceptibility loss: 5629.443359 
+Exponential rolling average perceptibility loss: 5633.197211 
+
+
+
+--- Step Number: 5 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.371829 
+Exponential rolling average detection loss: 1.641456 
+
+Current perceptibility loss: 5536.800293 
+Exponential rolling average perceptibility loss: 5540.994392 
+
+
+
+--- Step Number: 6 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.975167 
+Exponential rolling average detection loss: 1.742535 
+
+Current perceptibility loss: 5452.481445 
+Exponential rolling average perceptibility loss: 5455.274353 
+
+
+
+--- Step Number: 7 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.258394 
+Exponential rolling average detection loss: 1.847225 
+
+Current perceptibility loss: 5374.708496 
+Exponential rolling average perceptibility loss: 5376.321044 
+
+
+
+--- Step Number: 8 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.734784 
+Exponential rolling average detection loss: 1.796440 
+
+Current perceptibility loss: 5301.906738 
+Exponential rolling average perceptibility loss: 5303.797486 
+
+
+
+--- Step Number: 9 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.816488 
+Exponential rolling average detection loss: 1.924581 
+
+Current perceptibility loss: 5232.081543 
+Exponential rolling average perceptibility loss: 5234.154371 
+
+
+
+--- Step Number: 10 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.266400 
+Exponential rolling average detection loss: 1.950324 
+
+Current perceptibility loss: 5170.127441 
+Exponential rolling average perceptibility loss: 5171.115170 
+
+
+
+--- Step Number: 11 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.951444 
+Exponential rolling average detection loss: 2.068775 
+
+Current perceptibility loss: 5111.262207 
+Exponential rolling average perceptibility loss: 5112.167626 
+
+
+
+--- Step Number: 12 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.742268 
+Exponential rolling average detection loss: 2.033812 
+
+Current perceptibility loss: 5050.610352 
+Exponential rolling average perceptibility loss: 5052.112354 
+
+
+
+--- Step Number: 13 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.588201 
+Exponential rolling average detection loss: 2.121957 
+
+Current perceptibility loss: 4992.436035 
+Exponential rolling average perceptibility loss: 4992.710248 
+
+
+
+--- Step Number: 14 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.998815 
+Exponential rolling average detection loss: 2.054256 
+
+Current perceptibility loss: 4938.791992 
+Exponential rolling average perceptibility loss: 4939.057001 
+
+
+
+--- Step Number: 15 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.335635 
+Exponential rolling average detection loss: 2.088394 
+
+Current perceptibility loss: 4884.955566 
+Exponential rolling average perceptibility loss: 4885.146609 
+
+
+
+--- Step Number: 16 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.795247 
+Exponential rolling average detection loss: 2.216415 
+
+Current perceptibility loss: 4837.869141 
+Exponential rolling average perceptibility loss: 4837.918998 
+
+
+
+--- Step Number: 17 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.104205 
+Exponential rolling average detection loss: 2.175509 
+
+Current perceptibility loss: 4789.371094 
+Exponential rolling average perceptibility loss: 4788.554126 
+
+
+
+--- Step Number: 18 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.326469 
+Exponential rolling average detection loss: 2.226513 
+
+Current perceptibility loss: 4741.079590 
+Exponential rolling average perceptibility loss: 4741.306989 
+
+
+
+--- Step Number: 19 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.647961 
+Exponential rolling average detection loss: 2.216037 
+
+Current perceptibility loss: 4698.655762 
+Exponential rolling average perceptibility loss: 4697.869061 
+
+
+
+--- Step Number: 20 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.255380 
+Exponential rolling average detection loss: 2.318167 
+
+Current perceptibility loss: 4661.924316 
+Exponential rolling average perceptibility loss: 4660.529927 
+
+
+
+--- Step Number: 21 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.306945 
+Exponential rolling average detection loss: 2.359865 
+
+Current perceptibility loss: 4626.002441 
+Exponential rolling average perceptibility loss: 4624.343863 
+
+
+
+--- Step Number: 22 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.502801 
+Exponential rolling average detection loss: 2.379489 
+
+Current perceptibility loss: 4590.347656 
+Exponential rolling average perceptibility loss: 4588.460296 
+
+
+
+--- Step Number: 23 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.289752 
+Exponential rolling average detection loss: 2.320544 
+
+Current perceptibility loss: 4559.279785 
+Exponential rolling average perceptibility loss: 4557.325243 
+
+
+
+--- Step Number: 24 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.007088 
+Exponential rolling average detection loss: 2.468866 
+
+Current perceptibility loss: 4529.883789 
+Exponential rolling average perceptibility loss: 4528.108401 
+
+
+
+--- Step Number: 25 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.586623 
+Exponential rolling average detection loss: 2.428485 
+
+Current perceptibility loss: 4501.466309 
+Exponential rolling average perceptibility loss: 4499.739877 
+
+
+
+--- Step Number: 26 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.340898 
+Exponential rolling average detection loss: 2.382828 
+
+Current perceptibility loss: 4476.848145 
+Exponential rolling average perceptibility loss: 4474.526796 
+
+
+
+--- Step Number: 27 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.363513 
+Exponential rolling average detection loss: 2.506025 
+
+Current perceptibility loss: 4453.187988 
+Exponential rolling average perceptibility loss: 4450.407408 
+
+
+
+--- Step Number: 28 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.003078 
+Exponential rolling average detection loss: 2.407302 
+
+Current perceptibility loss: 4432.054199 
+Exponential rolling average perceptibility loss: 4429.403526 
+
+
+
+--- Step Number: 29 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.442933 
+Exponential rolling average detection loss: 2.474053 
+
+Current perceptibility loss: 4410.927734 
+Exponential rolling average perceptibility loss: 4407.984409 
+
+
+
+--- Step Number: 30 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.814030 
+Exponential rolling average detection loss: 2.600705 
+
+Current perceptibility loss: 4391.849609 
+Exponential rolling average perceptibility loss: 4388.963966 
+
+
+
+--- Step Number: 31 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.350324 
+Exponential rolling average detection loss: 2.531251 
+
+Current perceptibility loss: 4374.774902 
+Exponential rolling average perceptibility loss: 4371.888140 
+
+
+
+--- Step Number: 32 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.191679 
+Exponential rolling average detection loss: 2.526881 
+
+Current perceptibility loss: 4358.781250 
+Exponential rolling average perceptibility loss: 4355.541898 
+
+
+
+--- Step Number: 33 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.633037 
+Exponential rolling average detection loss: 2.557377 
+
+Current perceptibility loss: 4344.719238 
+Exponential rolling average perceptibility loss: 4341.122067 
+
+
+
+--- Step Number: 34 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.511853 
+Exponential rolling average detection loss: 2.614267 
+
+Current perceptibility loss: 4331.309082 
+Exponential rolling average perceptibility loss: 4328.034971 
+
+
+
+--- Step Number: 35 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.750094 
+Exponential rolling average detection loss: 2.673315 
+
+Current perceptibility loss: 4320.694336 
+Exponential rolling average perceptibility loss: 4317.446988 
+
+
+
+--- Step Number: 36 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.668940 
+Exponential rolling average detection loss: 2.646629 
+
+Current perceptibility loss: 4306.624512 
+Exponential rolling average perceptibility loss: 4302.883978 
+
+
+
+--- Step Number: 37 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 4.035570 
+Exponential rolling average detection loss: 2.600564 
+
+Current perceptibility loss: 4294.489746 
+Exponential rolling average perceptibility loss: 4290.889504 
+
+
+
+--- Step Number: 38 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.418275 
+Exponential rolling average detection loss: 2.624662 
+
+Current perceptibility loss: 4283.216309 
+Exponential rolling average perceptibility loss: 4279.983470 
+
+
+
+--- Step Number: 39 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.956826 
+Exponential rolling average detection loss: 2.666039 
+
+Current perceptibility loss: 4272.675293 
+Exponential rolling average perceptibility loss: 4269.519867 
+
+
+
+--- Step Number: 40 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 3.003400 
+Exponential rolling average detection loss: 2.751252 
+
+Current perceptibility loss: 4267.187988 
+Exponential rolling average perceptibility loss: 4263.566004 
+
+
+
+--- Step Number: 41 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.329866 
+Exponential rolling average detection loss: 2.710385 
+
+Current perceptibility loss: 4258.514648 
+Exponential rolling average perceptibility loss: 4255.594790 
+
+
+
+--- Step Number: 42 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 4.411396 
+Exponential rolling average detection loss: 2.816572 
+
+Current perceptibility loss: 4251.557617 
+Exponential rolling average perceptibility loss: 4247.928036 
+
+
+
+--- Step Number: 43 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.939725 
+Exponential rolling average detection loss: 2.646941 
+
+Current perceptibility loss: 4244.534180 
+Exponential rolling average perceptibility loss: 4240.652001 
+
+
+
+--- Step Number: 44 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.716242 
+Exponential rolling average detection loss: 2.698731 
+
+Current perceptibility loss: 4237.423828 
+Exponential rolling average perceptibility loss: 4233.644539 
+
+
+
+--- Step Number: 45 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.458990 
+Exponential rolling average detection loss: 2.655073 
+
+Current perceptibility loss: 4229.035156 
+Exponential rolling average perceptibility loss: 4225.452864 
+
+
+
+--- Step Number: 46 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.350670 
+Exponential rolling average detection loss: 2.753825 
+
+Current perceptibility loss: 4222.187500 
+Exponential rolling average perceptibility loss: 4218.903605 
+
+
+
+--- Step Number: 47 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.481549 
+Exponential rolling average detection loss: 2.744702 
+
+Current perceptibility loss: 4216.690918 
+Exponential rolling average perceptibility loss: 4213.055171 
+
+
+
+--- Step Number: 48 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 1.917387 
+Exponential rolling average detection loss: 2.725878 
+
+Current perceptibility loss: 4210.897461 
+Exponential rolling average perceptibility loss: 4207.440248 
+
+
+
+--- Step Number: 49 ---
+
+--- Iteration Number 1000 losses --- 
+Current detection loss: 2.551019 
+Exponential rolling average detection loss: 2.832745 
+
+Current perceptibility loss: 4205.803711 
+Exponential rolling average perceptibility loss: 4202.133303 
+
+
+
+--- Final predictions for flying_jet_with_clouds with adversarial patch ---
+predicted classes: ['airplane', 'airplane', 'person', 'person']
+predicted score: [0.99539006, 0.9811298, 0.94426143, 0.6755931]

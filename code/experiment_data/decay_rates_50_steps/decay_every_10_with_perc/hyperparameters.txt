@@ -1,0 +1,15 @@
+{
+    "max_iter": 1000,
+    "step_num": 50,
+    "decep_lr": 0.1,
+    "percep_lr": 0.5,
+    "decay_rate": 0.95,
+    "decay_freq": 10,
+    "decep_mom": 0.9,
+    "percep_mom": 0.9,
+    "data_folder_name": "decay_freq/decay_every_10_with_perc",
+    "previous_experiment_directory_name": null,
+    "patch_config": "hybrid",
+    "loss_print_freq": 1000,
+    "dec_update_freq": 1
+}

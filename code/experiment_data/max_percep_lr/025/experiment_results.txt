@@ -1,0 +1,11 @@
+--- Average detection losses & PerC distances ---
+Average detection loss: 1.7275304913520813
+Average rolling detection loss: 1.7055420262820633
+Average PerC distance: 3202.2970703125
+Average rolling PerC distance: 3199.9619481573413
+
+--- mAP Results ---
+The mAP for confidence threshold 0.001 = 0.09372088313102722
+The mAP for confidence threshold 0.1 = 0.0883597582578659
+The mAP for confidence threshold 0.5 = 0.0883597582578659
+The mAP averaged across all confidence thresholds = 0.090146799882253
