@@ -17,10 +17,8 @@ mv ./github/imperceptible_patch_generator
 ```bash
 mv ./code/experiment_data
 ```
-####
+  
 ### Credit
 The code has adapted two libraries:
-####
-https://github.com/Trusted-AI/adversarial-robustness-toolbox 
-####
-https://github.com/ZhengyuZhao/PerC-Adversarial
+https://github.com/Trusted-AI/adversarial-robustness-toolbox  
+https://github.com/ZhengyuZhao/PerC-Adversarial  
