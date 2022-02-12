@@ -1,6 +1,5 @@
 # Developing Imperceptible Adversarial Patches to Camouflage Military Assets From Computer Vision Enabled Technologies
 ![](robust_dpatch_imperceptible_patch_compare.png)
-####
 ### How to use:
 #### Install required files:
 ```bash
