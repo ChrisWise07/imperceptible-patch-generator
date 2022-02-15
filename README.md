@@ -13,9 +13,9 @@ mv ./github/imperceptible_patch_generator
 ```bash
 ./execute_imperceptible_patch
 ```
-#### Results:
+#### View Results:
 ```bash
-mv ./code/experiment_data
+mv ./code_and_experiment_results/experiment_data
 ```
   
 ### Credit
