@@ -41,11 +41,17 @@ class CustomPyTorchFasterRCNN(CustomPyTorchObjectDetector):
 
     def __init__(
         self,
-        model: Optional["torchvision.models.detection.fasterrcnn_resnet50_fpn"] = None,
+        model: Optional[
+            "torchvision.models.detection.fasterrcnn_resnet50_fpn"
+        ] = None,
         clip_values: Optional["CLIP_VALUES_TYPE"] = None,
         channels_first: Optional[bool] = None,
-        preprocessing_defences: Union["Preprocessor", List["Preprocessor"], None] = None,
-        postprocessing_defences: Union["Postprocessor", List["Postprocessor"], None] = None,
+        preprocessing_defences: Union[
+            "Preprocessor", List["Preprocessor"], None
+        ] = None,
+        postprocessing_defences: Union[
+            "Postprocessor", List["Postprocessor"], None
+        ] = None,
         preprocessing: "PREPROCESSING_TYPE" = None,
         attack_losses: Tuple[str, ...] = (
             "loss_classifier",
@@ -84,7 +90,10 @@ class CustomPyTorchFasterRCNN(CustomPyTorchObjectDetector):
 
         if model is None:  # pragma: no cover
             model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
-                pretrained=True, progress=True, num_classes=91, pretrained_backbone=True
+                pretrained=True,
+                progress=True,
+                num_classes=91,
+                pretrained_backbone=True,
             )
 
         super().__init__(

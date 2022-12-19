@@ -49,8 +49,12 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         model,
         clip_values: Optional["CLIP_VALUES_TYPE"] = None,
         channels_first: Optional[bool] = None,
-        preprocessing_defences: Union["Preprocessor", List["Preprocessor"], None] = None,
-        postprocessing_defences: Union["Postprocessor", List["Postprocessor"], None] = None,
+        preprocessing_defences: Union[
+            "Preprocessor", List["Preprocessor"], None
+        ] = None,
+        postprocessing_defences: Union[
+            "Postprocessor", List["Postprocessor"], None
+        ] = None,
         preprocessing: "PREPROCESSING_TYPE" = None,
         attack_losses: Tuple[str, ...] = (
             "loss_classifier",
@@ -88,13 +92,23 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         import torch  # lgtm [py/repeated-import]
         import torchvision  # lgtm [py/repeated-import]
 
-        torch_version = list(map(int, torch.__version__.lower().split("+")[0].split(".")))
-        torchvision_version = list(map(int, torchvision.__version__.lower().split("+")[0].split(".")))
-        assert not (torch_version[0] == 1 and (torch_version[1] == 8 or torch_version[1] == 9)), (
+        torch_version = list(
+            map(int, torch.__version__.lower().split("+")[0].split("."))
+        )
+        torchvision_version = list(
+            map(int, torchvision.__version__.lower().split("+")[0].split("."))
+        )
+        assert not (
+            torch_version[0] == 1
+            and (torch_version[1] == 8 or torch_version[1] == 9)
+        ), (
             "PyTorchObjectDetector does not support torch==1.8 and torch==1.9 because of "
             "https://github.com/pytorch/vision/issues/4153. Support will return for torch==1.10."
         )
-        assert not (torchvision_version[0] == 0 and (torchvision_version[1] == 9 or torchvision_version[1] == 10)), (
+        assert not (
+            torchvision_version[0] == 0
+            and (torchvision_version[1] == 9 or torchvision_version[1] == 10)
+        ), (
             "PyTorchObjectDetector does not support torchvision==0.9 and torchvision==0.10 because of "
             "https://github.com/pytorch/vision/issues/4153. Support will return for torchvision==0.11."
         )
@@ -112,14 +126,22 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
 
         if self.clip_values is not None:
             if self.clip_values[0] != 0:
-                raise ValueError("This classifier requires un-normalized input images with clip_vales=(0, max_value).")
+                raise ValueError(
+                    "This classifier requires un-normalized input images with clip_vales=(0, max_value)."
+                )
             if self.clip_values[1] <= 0:  # pragma: no cover
-                raise ValueError("This classifier requires un-normalized input images with clip_vales=(0, max_value).")
+                raise ValueError(
+                    "This classifier requires un-normalized input images with clip_vales=(0, max_value)."
+                )
 
         if preprocessing is not None:
-            raise ValueError("This estimator does not support `preprocessing`.")
+            raise ValueError(
+                "This estimator does not support `preprocessing`."
+            )
         if self.postprocessing_defences is not None:
-            raise ValueError("This estimator does not support `postprocessing_defences`.")
+            raise ValueError(
+                "This estimator does not support `postprocessing_defences`."
+            )
 
         # Set device
         self._device: torch.device
@@ -159,8 +181,12 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         return self._device
 
     def _get_losses(
-        self, x: np.ndarray, y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]]
-    ) -> Tuple[Dict[str, "torch.Tensor"], List["torch.Tensor"], List["torch.Tensor"]]:
+        self,
+        x: np.ndarray,
+        y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]],
+    ) -> Tuple[
+        Dict[str, "torch.Tensor"], List["torch.Tensor"], List["torch.Tensor"]
+    ]:
         """
         Get the loss tensor output of the model including all preprocessing.
 
@@ -187,22 +213,38 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
                 y_tensor = list()
                 for i, y_i in enumerate(y):
                     y_t = dict()
-                    y_t["boxes"] = torch.from_numpy(y_i["boxes"]).type(torch.float).to(self.device)
-                    y_t["labels"] = torch.from_numpy(y_i["labels"]).type(torch.int64).to(self.device)
+                    y_t["boxes"] = (
+                        torch.from_numpy(y_i["boxes"])
+                        .type(torch.float)
+                        .to(self.device)
+                    )
+                    y_t["labels"] = (
+                        torch.from_numpy(y_i["labels"])
+                        .type(torch.int64)
+                        .to(self.device)
+                    )
                     if "masks" in y_i:
-                        y_t["masks"] = torch.from_numpy(y_i["masks"]).type(torch.int64).to(self.device)
+                        y_t["masks"] = (
+                            torch.from_numpy(y_i["masks"])
+                            .type(torch.int64)
+                            .to(self.device)
+                        )
                     y_tensor.append(y_t)
             else:
                 y_tensor = y
 
-            transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
+            transform = torchvision.transforms.Compose(
+                [torchvision.transforms.ToTensor()]
+            )
             image_tensor_list_grad = list()
             y_preprocessed = list()
             inputs_t = list()
 
             for i in range(x.shape[0]):
                 if self.clip_values is not None:
-                    x_grad = transform(x[i] / self.clip_values[1]).to(self.device)
+                    x_grad = transform(x[i] / self.clip_values[1]).to(
+                        self.device
+                    )
                 else:
                     x_grad = transform(x[i]).to(self.device)
                 x_grad.requires_grad = True
@@ -216,25 +258,45 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
                 inputs_t.append(x_preprocessed_i)
 
         elif isinstance(x, np.ndarray):
-            x_preprocessed, y_preprocessed = self._apply_preprocessing(x, y=y, fit=False, no_grad=True)
+            x_preprocessed, y_preprocessed = self._apply_preprocessing(
+                x, y=y, fit=False, no_grad=True
+            )
 
-            if y_preprocessed is not None and isinstance(y_preprocessed[0]["boxes"], np.ndarray):
+            if y_preprocessed is not None and isinstance(
+                y_preprocessed[0]["boxes"], np.ndarray
+            ):
                 y_preprocessed_tensor = list()
                 for i, y_i in enumerate(y_preprocessed):
                     y_preprocessed_t = dict()
-                    y_preprocessed_t["boxes"] = torch.from_numpy(y_i["boxes"]).type(torch.float).to(self.device)
-                    y_preprocessed_t["labels"] = torch.from_numpy(y_i["labels"]).type(torch.int64).to(self.device)
+                    y_preprocessed_t["boxes"] = (
+                        torch.from_numpy(y_i["boxes"])
+                        .type(torch.float)
+                        .to(self.device)
+                    )
+                    y_preprocessed_t["labels"] = (
+                        torch.from_numpy(y_i["labels"])
+                        .type(torch.int64)
+                        .to(self.device)
+                    )
                     if "masks" in y_i:
-                        y_preprocessed_t["masks"] = torch.from_numpy(y_i["masks"]).type(torch.uint8).to(self.device)
+                        y_preprocessed_t["masks"] = (
+                            torch.from_numpy(y_i["masks"])
+                            .type(torch.uint8)
+                            .to(self.device)
+                        )
                     y_preprocessed_tensor.append(y_preprocessed_t)
                 y_preprocessed = y_preprocessed_tensor
 
-            transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
+            transform = torchvision.transforms.Compose(
+                [torchvision.transforms.ToTensor()]
+            )
             image_tensor_list_grad = list()
 
             for i in range(x_preprocessed.shape[0]):
                 if self.clip_values is not None:
-                    x_grad = transform(x_preprocessed[i] / self.clip_values[1]).to(self.device)
+                    x_grad = transform(
+                        x_preprocessed[i] / self.clip_values[1]
+                    ).to(self.device)
                 else:
                     x_grad = transform(x_preprocessed[i]).to(self.device)
                 x_grad.requires_grad = True
@@ -243,7 +305,9 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
             inputs_t = image_tensor_list_grad
 
         else:
-            raise NotImplementedError("Combination of inputs and preprocessing not supported.")
+            raise NotImplementedError(
+                "Combination of inputs and preprocessing not supported."
+            )
 
         if isinstance(y_preprocessed, np.ndarray):
             labels_t = torch.from_numpy(y_preprocessed).to(self.device)  # type: ignore
@@ -255,7 +319,10 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         return output, inputs_t, image_tensor_list_grad
 
     def loss_gradient(  # pylint: disable=W0613
-        self, x: np.ndarray, y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]], **kwargs
+        self,
+        x: np.ndarray,
+        y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]],
+        **kwargs
     ) -> np.ndarray:
         """
         Compute the gradient of the loss function w.r.t. `x`.
@@ -283,7 +350,9 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
             x_i = x[[i]]
             y_i = [y[i]]
 
-            output, inputs_t, image_tensor_list_grad = self._get_losses(x=x_i, y=y_i)
+            output, inputs_t, image_tensor_list_grad = self._get_losses(
+                x=x_i, y=y_i
+            )
 
             # Compute the gradient and return
             loss = None
@@ -325,7 +394,9 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
 
         return grads, loss.item()
 
-    def predict(self, x: np.ndarray, batch_size: int = 128, **kwargs) -> List[Dict[str, np.ndarray]]:
+    def predict(
+        self, x: np.ndarray, batch_size: int = 128, **kwargs
+    ) -> List[Dict[str, np.ndarray]]:
         """
         Perform prediction for a batch of inputs.
 
@@ -345,7 +416,9 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         # Apply preprocessing
         x, _ = self._apply_preprocessing(x, y=None, fit=False)
 
-        transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
+        transform = torchvision.transforms.Compose(
+            [torchvision.transforms.ToTensor()]
+        )
         image_tensor_list: List[np.ndarray] = list()
 
         if self.clip_values is not None:
@@ -353,28 +426,55 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         else:
             norm_factor = 1.0
         for i in range(x.shape[0]):
-            image_tensor_list.append(transform(x[i] / norm_factor).to(self.device))
+            image_tensor_list.append(
+                transform(x[i] / norm_factor).to(self.device)
+            )
         predictions = self._model(image_tensor_list)
 
         for i_prediction, _ in enumerate(predictions):
-            predictions[i_prediction]["boxes"] = predictions[i_prediction]["boxes"].detach().cpu().numpy()
-            predictions[i_prediction]["labels"] = predictions[i_prediction]["labels"].detach().cpu().numpy()
-            predictions[i_prediction]["scores"] = predictions[i_prediction]["scores"].detach().cpu().numpy()
+            predictions[i_prediction]["boxes"] = (
+                predictions[i_prediction]["boxes"].detach().cpu().numpy()
+            )
+            predictions[i_prediction]["labels"] = (
+                predictions[i_prediction]["labels"].detach().cpu().numpy()
+            )
+            predictions[i_prediction]["scores"] = (
+                predictions[i_prediction]["scores"].detach().cpu().numpy()
+            )
             if "masks" in predictions[i_prediction]:
-                predictions[i_prediction]["masks"] = predictions[i_prediction]["masks"].detach().cpu().numpy().squeeze()
+                predictions[i_prediction]["masks"] = (
+                    predictions[i_prediction]["masks"]
+                    .detach()
+                    .cpu()
+                    .numpy()
+                    .squeeze()
+                )
 
         return predictions
 
-    def fit(self, x: np.ndarray, y, batch_size: int = 128, nb_epochs: int = 20, **kwargs) -> None:
+    def fit(
+        self,
+        x: np.ndarray,
+        y,
+        batch_size: int = 128,
+        nb_epochs: int = 20,
+        **kwargs
+    ) -> None:
         raise NotImplementedError
 
     def get_activations(
-        self, x: np.ndarray, layer: Union[int, str], batch_size: int, framework: bool = False
+        self,
+        x: np.ndarray,
+        layer: Union[int, str],
+        batch_size: int,
+        framework: bool = False,
     ) -> np.ndarray:
         raise NotImplementedError
 
     def compute_losses(
-        self, x: np.ndarray, y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]]
+        self,
+        x: np.ndarray,
+        y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]],
     ) -> Dict[str, np.ndarray]:
         """
         Compute all loss components.
@@ -397,7 +497,10 @@ class CustomPyTorchObjectDetector(ObjectDetectorMixin, PyTorchEstimator):
         return output
 
     def compute_loss(
-        self, x: np.ndarray, y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]], **kwargs
+        self,
+        x: np.ndarray,
+        y: Union[List[Dict[str, np.ndarray]], List[Dict[str, "torch.Tensor"]]],
+        **kwargs
     ) -> Union[np.ndarray, "torch.Tensor"]:
         """
         Compute the loss of the neural network for samples `x`.
