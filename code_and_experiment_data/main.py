@@ -191,9 +191,10 @@ loss_names = [
 def main():
     from patch_generator import generate_rrap_for_image
 
+    print("Starting imperceptible patch experiments ... \n")
     make_directories(list_of_directories)
 
-    print(f"{current_experiment_data_directory}/hyperparameters.txt")
+    
     file_handler(
         path=f"{current_experiment_data_directory}/hyperparameters.txt",
         mode="w",

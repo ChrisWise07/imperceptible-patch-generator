@@ -38,14 +38,15 @@ def generate_adversarial_patch(
     else:
         previous_num_steps = 0
 
-    image.append_to_training_progress_file(
-        f"\n\n--- Generating adversarial patch for {image_name} ---"
-    )
+    generate_patch_string = f"\n\n--- Generating adversarial patch for {image_name} ---"
+    image.append_to_training_progress_file(generate_patch_string)
+    print(generate_patch_string)
 
     for step in range(previous_num_steps, previous_num_steps + args.step_num):
-        image.append_to_training_progress_file(
-            f"\n\n--- Step Number: {step} ---"
-        )
+        step_string = f"\n\n--- Step Number: {step} ---"
+        image.append_to_training_progress_file(step_string)
+        print(step_string)
+        
 
         # train adv patch to trick object detector and not to be perceptibile
         attack.generate(
